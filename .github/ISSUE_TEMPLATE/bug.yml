@@ -1,0 +1,22 @@
+name: Bug report
+description: Report incorrect behavior or an analytical discrepancy.
+body:
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and observed behavior
+      description: Describe the discrepancy in English.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Include commands and safe examples. Do not paste credentials or microdata.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Versions and analytical context
+      description: Include code version, period, population, and source version when relevant.
