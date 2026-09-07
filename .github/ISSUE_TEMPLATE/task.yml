@@ -1,0 +1,29 @@
+name: Work chunk
+description: Plan a focused implementation, research, or documentation task.
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: Describe the question or resulting behavior in English.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and dependencies
+      description: Include inputs, linked issues, and explicit exclusions.
+    validations:
+      required: true
+  - type: input
+    id: effort
+    attributes:
+      label: Estimated active effort
+      value: About one hour
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Deliverable and acceptance criteria
+      description: State the artifact and how completion will be verified.
+    validations:
+      required: true
