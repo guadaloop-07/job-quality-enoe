@@ -5,7 +5,9 @@ A reproducible, survey-aware atlas of employment-quality profiles, built from EN
 The proposed pilot covers subordinate paid workers in Jalisco during 2023–2025,
 subject to validating data coverage and comparability. Profiles are analytical
 constructs, not official INEGI categories. Analytical code will be added through
-scoped issues; this baseline provides development infrastructure.
+scoped issues. The approved [pilot scope](docs/scope.md) retains 2023–2025 as
+the core window and audits through 2026 Q2. Run the
+[read-only source audit](docs/source-audit.md) before analytical preparation.
 
 ## Development setup
 

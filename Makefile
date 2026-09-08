@@ -7,3 +7,4 @@ setup:
 check:
 	uv lock --check
 	uv run --locked pre-commit run --all-files --hook-stage manual
+	uv run --locked python -m unittest discover -s tests -v
