@@ -32,12 +32,18 @@ class LocalConfigurationTests(unittest.TestCase):
 
     def test_initial_migration_has_metadata_and_staging_schemas(self):
         migrations = migration_files()
-        self.assertEqual([path.name for path in migrations], ["0001_metadata_and_staging.sql"])
+        self.assertEqual(
+            [path.name for path in migrations],
+            ["0001_metadata_and_staging.sql", "0002_enoe_person_quarter_staging.sql"],
+        )
         source = (MIGRATIONS / migrations[0].name).read_text()
         self.assertIn("CREATE SCHEMA IF NOT EXISTS metadata", source)
         self.assertIn("CREATE SCHEMA IF NOT EXISTS staging", source)
         self.assertIn("metadata.source_archives", source)
         self.assertIn("metadata.ingestion_runs", source)
+        ingestion = (MIGRATIONS / migrations[1].name).read_text()
+        self.assertIn("staging.enoe_person_quarter", ingestion)
+        self.assertIn("mes_cal", ingestion)
 
     def test_migration_command_keeps_password_out_of_arguments(self):
         args = command(Path("private.env"), "isolated-test")
@@ -63,12 +69,13 @@ class MigrationIntegrationTests(unittest.TestCase):
         return result.stdout.strip()
 
     def test_initial_migration_is_idempotent(self):
-        migration = (MIGRATIONS / "0001_metadata_and_staging.sql").read_text()
-        self.query(migration)
-        self.query(migration)
+        for migration_path in migration_files():
+            migration = migration_path.read_text()
+            self.query(migration)
+            self.query(migration)
         result = self.query(
             "SELECT to_regclass('metadata.source_archives') IS NOT NULL "
             "AND to_regclass('metadata.ingestion_runs') IS NOT NULL "
-            "AND to_regnamespace('staging') IS NOT NULL;"
+            "AND to_regclass('staging.enoe_person_quarter') IS NOT NULL;"
         )
         self.assertEqual(result, "t")
