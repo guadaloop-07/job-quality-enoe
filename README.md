@@ -32,6 +32,13 @@ Hooks check file hygiene, structured-file syntax, private keys, large files,
 Python lint/format, and notebook outputs. Local commits to `main` are blocked;
 GitHub runs shared checks on pull requests and `main`.
 
+## Independent local database
+
+The project-owned PostgreSQL 17 environment is empty by design and separate from
+work systems. It uses a private `.env`, a loopback-only default port of 5435,
+and versioned migrations. Follow the [local database guide](docs/local-database.md)
+to start it, preserve its volume, apply migrations, test it, and back it up.
+
 ## Contribution workflow
 
 Write repository content, code comments, commits, issues, and PRs in English.
