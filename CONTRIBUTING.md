@@ -29,7 +29,7 @@ Before committing, run:
 
 ```bash
 uv sync --locked
-make check
+just check
 git diff --check
 ```
 
@@ -53,10 +53,12 @@ issue validation. GitHub enforces the protected-branch rules documented in
 
 ## Development tools
 
-Run `make setup` for each clone. `make check` runs shared manual-stage checks,
+Run `just setup` for each clone. `just check` runs shared manual-stage checks,
 including in CI. The branch guard runs only at the `pre-commit` stage, allowing
 checks on unchanged `main` while rejecting direct commits. GitHub independently
-requires PRs, including for administrators.
+requires PRs, including for administrators. The repository disables automatic
+`.env` loading in `justfile`; database recipes pass the private file explicitly
+to Docker Compose instead.
 
 Use `uv add --dev <tool>` and commit `pyproject.toml` with `uv.lock`. Update hooks
 with `uv run pre-commit autoupdate` on an issue branch. Dependabot proposes weekly

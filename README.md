@@ -25,12 +25,21 @@ uv run pre-commit run --all-files --hook-stage manual
 ```
 
 Python 3.12 is selected by `.python-version`; uv can provision it if needed.
-Dependencies are recorded in `uv.lock`. With Make, use `make setup` and `make check`.
-Install hooks for every new clone: Git does not distribute installed hooks.
+Dependencies are recorded in `uv.lock`. Install [just](https://github.com/casey/just),
+then use `just setup` and `just check`. Install hooks for every new clone: Git
+does not distribute installed hooks.
 
 Hooks check file hygiene, structured-file syntax, private keys, large files,
 Python lint/format, and notebook outputs. Local commits to `main` are blocked;
 GitHub runs shared checks on pull requests and `main`.
+
+## Independent local database
+
+The project-owned PostgreSQL 17 environment is empty by design and separate from
+work systems. It uses a private `.env`, a loopback-only default port of 5435,
+and versioned migrations. Follow the [local database guide](docs/local-database.md)
+to start it, preserve its volume, apply migrations, test it, and back it up. Run
+`just --list` to see the available repository recipes.
 
 ## Contribution workflow
 

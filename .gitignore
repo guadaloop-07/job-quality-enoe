@@ -150,12 +150,19 @@ activemq-data/
 # Environments
 .env
 .envrc
+.env.*
+!.env.example
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Local database data and source artifacts must remain outside version control.
+*.backup
+*.dump
+data/raw/
 
 # Spyder project settings
 .spyderproject
