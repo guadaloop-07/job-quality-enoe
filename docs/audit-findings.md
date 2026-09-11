@@ -1,4 +1,37 @@
-# Initial source audit — 2026-09-08
+# ENOE source audit findings
+
+## Gate A follow-up — 2026-09-10
+
+The official INEGI resident key is one-to-one and complete in the inspected
+2023 Q1, 2025 Q2 and 2025 Q3 source archives. The deployed ETL does not use that
+key: it omits TIPO and MES_CAL, uses N_ENT instead of N_REN, and stops retaining
+the renamed CVE_ENT entity field in COE tables from 2025 Q3. Gate A is therefore
+blocked by a critical upstream integrity defect, not by lack of viable source
+records.
+
+The current join creates 173 multiple COE matches among 5,085 raw candidates in
+2023 Q1 and 622 among 4,460 in 2025 Q3. In 2025 Q3, 338 candidates receive the
+first COE1 row from another entity and 318 do so for COE2. The staged table also
+has fewer candidates than the raw official-key reconstruction: 4,993 versus
+5,085 in 2023 Q1 and 4,398 versus 4,460 in 2025 Q3. These are aggregate counts;
+no person-level identifiers or microdata were exported.
+
+Official documentation also resolves the main semantic questions. INGOCUP zero
+means an exact amount is unavailable, not necessarily zero earnings; 17.71–33.57%
+of candidate quarterly weight has INGOCUP zero together with a positive ING7C
+band. HRSOCUP zero appears only with DUR9C temporary absence or unspecified
+status in the audited candidate rows. P3I is not comparable across quarters:
+the expanded questionnaire asks union membership while the basic questionnaire
+asks written-contract status. Use TIP_CON for contract status and exclude P3I
+from the cross-quarter feature set.
+
+See the [variable dictionary](variable-dictionary.md), [raw join audit](raw-join-audit.md),
+and [Gate A decision](gate-a-decision.md). Local aggregate evidence is in
+outputs/source-audit-2026-09-10.json and outputs/raw-join-audit-2026-09-10.json;
+both paths are ignored by Git. The staged-audit query SHA-256 is
+51412ff5bd25764e8d78721f381d4f7b3c6901c37d69765cd068b0dd666ac4d2.
+
+## Initial staging audit — 2026-09-08
 
 The approved window is technically accessible, but Gate A is **not passed**.
 Continue semantic and upstream join checks before model preparation.

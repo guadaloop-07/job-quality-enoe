@@ -28,7 +28,9 @@ class AuditSQLTests(unittest.TestCase):
             tue_ppal=1,
             emp_ppal=2,
             ingocup=0,
+            ing7c=2,
             hrsocup=40,
+            dur9c=6,
             est_d_tri=1,
             upm=1,
             cd_a=2,
@@ -86,3 +88,11 @@ class AuditSQLTests(unittest.TestCase):
         self.assertEqual(income["null_records"], 1)
         self.assertEqual(income["zero_records"], 2)
         self.assertEqual(income["zero_weight"], 200)
+        semantics = next(
+            r
+            for r in self.result["semantic_consistency"]
+            if (r["anio"], r["trimestre"]) == (2023, 1)
+        )
+        self.assertEqual(semantics["income_zero_bracket_records"], 2)
+        self.assertEqual(semantics["income_zero_bracket_weight"], 200)
+        self.assertEqual(semantics["income_zero_unspecified_records"], 0)

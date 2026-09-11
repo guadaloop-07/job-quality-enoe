@@ -10,14 +10,14 @@ actual deliverables rather than treating the infrastructure baseline as analysis
 | 02 Environment | Partial | Python/uv/CI and first runnable SQL audit; add analysis dependencies as needed |
 | 03 Access and schema | Complete for local Docker route | [Connection and inventory](source-audit.md); direct libpq route not live-tested |
 | 04 Coverage and candidate population | Complete, provisional universe | [Quarterly evidence](audit-findings.md) and cumulative funnel |
-| 05 Income and hours definitions | Pending | Investigate zeros and source units/codes |
-| 06 Contract and protection | Pending | Resolve p3i applicability and code mappings |
-| 07 Join integrity | Partial | Stored natural keys pass; original SDEM–COE joins unverified |
-| 08 Nonresponse and Gate A | Partial | Initial profiles available; semantic missingness and viability unresolved |
-| 09–48 | Not started | Proceed through the original dependency gates |
+| 05 Income and hours definitions | Complete for Gate A | [Source-backed definitions](variable-dictionary.md); retain income bands and distinguish temporary-absence hours |
+| 06 Contract and protection | Complete for Gate A | Use tip_con, pre_asa and seg_soc; exclude p3i as a cross-quarter feature |
+| 07 Join integrity | Diagnosis complete; repair pending | [Raw audit](raw-join-audit.md) proves the official key is safe and the deployed ETL key is not |
+| 08 Nonresponse and Gate A | Complete: blocked | [Decision](gate-a-decision.md) requires upstream repair, reload and reconciliation |
+| 09–48 | Not started; blocked | Resume only after the Gate A reopening criteria pass |
 
-Tracking issue: #3. No unattended computations remain. Active duration was not
+Tracking issues: #3 and #5. No unattended computations remain. Active duration was not
 instrumented; do not interpret elapsed conversation time as measured work hours.
 The aggregate live query took under five seconds on this run; costs are not
-guaranteed for other databases. Next deliverable: a source-backed variable
-dictionary and explicit decisions for income, hours, protection and contract.
+guaranteed for other databases. Next deliverable: repair the upstream entity and
+resident join keys, reload the affected periods and rerun both aggregate audits.

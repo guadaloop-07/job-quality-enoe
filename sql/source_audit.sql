@@ -52,6 +52,28 @@ WITH source AS MATERIALIZED (
         ('ingocup', ingocup), ('hrsocup', hrsocup)
     ) v(variable, value)
     GROUP BY anio, trimestre, variable
+), semantic_consistency AS (
+    SELECT anio, trimestre, count(*) AS records,
+        count(*) FILTER (WHERE ingocup = 0 AND ing7c BETWEEN 1 AND 5)
+            AS income_zero_bracket_records,
+        coalesce(sum(fac) FILTER (WHERE fac > 0 AND ingocup = 0
+            AND ing7c BETWEEN 1 AND 5), 0) AS income_zero_bracket_weight,
+        count(*) FILTER (WHERE ingocup = 0 AND ing7c = 6)
+            AS income_zero_no_income_records,
+        coalesce(sum(fac) FILTER (WHERE fac > 0 AND ingocup = 0 AND ing7c = 6), 0)
+            AS income_zero_no_income_weight,
+        count(*) FILTER (WHERE ingocup = 0 AND ing7c = 7)
+            AS income_zero_unspecified_records,
+        coalesce(sum(fac) FILTER (WHERE fac > 0 AND ingocup = 0 AND ing7c = 7), 0)
+            AS income_zero_unspecified_weight,
+        count(*) FILTER (WHERE ingocup > 0 AND (ing7c IS NULL OR ing7c IN (6, 7)))
+            AS income_positive_category_conflicts,
+        count(*) FILTER (WHERE hrsocup = 0 AND dur9c = 1) AS hours_zero_absent_records,
+        count(*) FILTER (WHERE hrsocup = 0 AND dur9c = 9)
+            AS hours_zero_unspecified_records,
+        count(*) FILTER (WHERE hrsocup = 0 AND (dur9c IS NULL OR dur9c NOT IN (1, 9)))
+            AS hours_zero_other_records
+    FROM candidate GROUP BY anio, trimestre
 ), design AS (
     SELECT anio, trimestre, count(*) AS records,
         count(*) FILTER (WHERE est_d_tri IS NULL) AS null_strata,
@@ -96,6 +118,8 @@ SELECT json_build_object(
     'funnel', (SELECT json_agg(f ORDER BY anio, trimestre, step) FROM funnel f),
     'codes', (SELECT json_agg(c ORDER BY anio, trimestre, variable, value) FROM codes c),
     'numeric', (SELECT json_agg(n ORDER BY anio, trimestre, variable) FROM numeric_profile n),
+    'semantic_consistency',
+        (SELECT json_agg(s ORDER BY anio, trimestre) FROM semantic_consistency s),
     'design', (SELECT json_agg(d ORDER BY anio, trimestre) FROM design d),
     'integrity', (SELECT json_agg(i ORDER BY anio, trimestre) FROM integrity i)
 );

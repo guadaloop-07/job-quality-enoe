@@ -19,8 +19,15 @@ The SQL in `sql/source_audit.sql` exports only aggregates and schema metadata.
 Output is ignored by Git and exclusive creation prevents overwrites. Each run
 records capture time, database version, snapshot and query SHA-256. A snapshot
 identifier is provenance, not a restorable input: the mutable database cannot
-reproduce an old run without a separately retained source snapshot. ETL input
-hashes, ingestion version and archive versions remain to be established.
+reproduce an old run without a separately retained source snapshot. The
+[bounded raw audit](raw-join-audit.md) records hashes for three official
+archives; the deployed ETL's complete input manifest and ingestion revision
+remain to be established.
+
+The semantic-consistency section separates missing exact income from reported
+income bands and distinguishes zero hours during a temporary absence from other
+zero-hour records. These are diagnostics against official code lists; they do
+not silently recode the staged data.
 
 The funnel is cumulative: step 0 is all rows in the audit window, 1 Jalisco,
 2 complete interview, 3 accepted residency, 4 accepted age, 5 occupied, and
@@ -38,10 +45,13 @@ Design checks establish presence, not valid variance estimation. Informality
 predicate disagreements are diagnostics, not an adjudication of definitions.
 
 The natural-key check covers the post-ingestion table. It cannot prove original
-SDEM–COE correspondence, detect records lost before insertion or validate joins
-from missing source archives. Those require an upstream audit.
+SDEM–COE correspondence or detect records lost before insertion. The bounded
+[raw join audit](raw-join-audit.md) now shows that the official shared key is
+safe in the inspected archives while the current ETL key is not; this is why
+Gate A remains blocked.
 
-See [initial findings](audit-findings.md) and [implementation progress](implementation-progress.md).
+See [findings](audit-findings.md), the [Gate A decision](gate-a-decision.md),
+and [implementation progress](implementation-progress.md).
 Run all tests, including SQL fixtures without database writes:
 
 ```bash
