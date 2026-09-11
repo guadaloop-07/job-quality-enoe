@@ -8,16 +8,16 @@ actual deliverables rather than treating the infrastructure baseline as analysis
 |---|---|---|
 | 01 Scope | Complete | [Scope](scope.md), including expanded audit window |
 | 02 Environment | Complete for database foundation | Python/uv/CI plus an isolated [PostgreSQL 17 environment](local-database.md); add analysis dependencies as needed |
-| 03 Access and schema | Foundation complete; empty by design | Versioned metadata and staging schemas are project-owned; official source ingestion is pending #8 |
+| 03 Access and schema | Complete for the independent core window | [Official ingestion](official-enoe-ingestion.md), [source manifest](official-enoe-source-manifest.md), and [12-period reconciliation](official-enoe-reconciliation.md) |
 | 04 Coverage and candidate population | Complete, provisional universe | [Quarterly evidence](audit-findings.md) and cumulative funnel |
 | 05 Income and hours definitions | Complete for Gate A | [Source-backed definitions](variable-dictionary.md); retain income bands and distinguish temporary-absence hours |
 | 06 Contract and protection | Complete for Gate A | Use tip_con, pre_asa and seg_soc; exclude p3i as a cross-quarter feature |
-| 07 Join integrity | Diagnosis complete; repair pending | [Raw audit](raw-join-audit.md) proves the official key is safe and the deployed ETL key is not |
+| 07 Join integrity | Complete for independent 2023--2025 staging | Official-key source validation and [aggregate reconciliation](official-enoe-reconciliation.md); work ETL repair remains outside this repository |
 | 08 Nonresponse and Gate A | Complete: blocked | [Decision](gate-a-decision.md) requires upstream repair, reload and reconciliation |
-| 09–48 | Not started; blocked | Resume only after the Gate A reopening criteria pass |
+| 09–48 | Not started | Independent 2023--2025 source integrity criteria now pass; review Gate A before analytical preparation |
 
 Tracking issues: #3, #5, #7, and #8. No unattended computations remain. Active duration was not
 instrumented; do not interpret elapsed conversation time as measured work hours.
 The aggregate live query took under five seconds on this run; costs are not
-guaranteed for other databases. Next deliverable: ingest and validate official
-2023--2025 archives in the independent staging environment (#8).
+guaranteed for other databases. Next deliverable: review the independent Gate A
+evidence before analytical preparation.
