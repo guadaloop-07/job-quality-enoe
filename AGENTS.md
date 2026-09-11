@@ -12,7 +12,7 @@ language.
 2. Open or identify the issue before editing project files.
 3. Create an issue-linked branch from current `main`, such as
    `chore/1-repository-bootstrap` or `feat/12-income-preparation`.
-4. Implement a focused change and run relevant validation, including `make check`.
+4. Implement a focused change and run relevant validation, including `just check`.
 5. Commit in English with a conventional title, push, and open a PR containing
    `Closes #<issue-number>` and actual validation results.
 6. Squash merge only within the user's authorized scope, after required checks

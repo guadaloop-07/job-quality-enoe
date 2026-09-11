@@ -13,15 +13,15 @@ replace the template password with a credential used only for this database:
 ```bash
 cp .env.example .env
 # Edit .env locally; it is ignored by Git.
-make db-up
-make db-status
-make db-migrate
-make db-test
+just db-up
+just db-status
+just db-migrate
+just db-test
 ```
 
 The default host binding is `127.0.0.1:5435`. Change `POSTGRES_PORT` in `.env`
-when that port is occupied. The health check uses `pg_isready`; `make db-status`
-shows the service state. `make db-migrate` is safe to re-run: it stores each
+when that port is occupied. The health check uses `pg_isready`; `just db-status`
+shows the service state. `just db-migrate` is safe to re-run: it stores each
 migration filename and SHA-256 in `metadata.schema_migrations`, and rejects a
 recorded migration whose contents later change.
 
@@ -29,11 +29,11 @@ To inspect the Compose structure without substituting or displaying local
 configuration values, run:
 
 ```bash
-make db-config
+just db-config
 ```
 
-`make db-down` stops the service but preserves the named `postgres_data` volume.
-Starting it again with `make db-up` resumes the same database. Do not use
+`just db-down` stops the service but preserves the named `postgres_data` volume.
+Starting it again with `just db-up` resumes the same database. Do not use
 `docker compose down -v` unless you have intentionally backed up and decided to
 destroy all local database state; it removes the volume.
 
@@ -58,7 +58,7 @@ docker compose --env-file .env -f compose.yaml exec -T db sh -ec \
   < /safe/location/enoe-local.backup
 ```
 
-Run `make db-migrate` and `make db-test` after a restore. Review the archive
+Run `just db-migrate` and `just db-test` after a restore. Review the archive
 location and destination before either command; neither backup files nor raw
 survey data belong in Git.
 

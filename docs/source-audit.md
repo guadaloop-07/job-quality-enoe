@@ -56,7 +56,7 @@ Run all tests, including SQL fixtures without database writes:
 
 ```bash
 ENOE_DOCKER_CONTAINER=postgres-dev PGDATABASE=enoe_microdatos \
-  ENOE_TEST_POSTGRES=1 make check
+  ENOE_TEST_POSTGRES=1 just check
 ```
 
 Without `ENOE_TEST_POSTGRES=1`, local SQL integration tests are explicitly skipped.

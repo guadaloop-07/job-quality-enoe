@@ -50,5 +50,9 @@ jobs:
           enable-cache: true
       - name: Install locked development dependencies
         run: uv sync --locked
+      - name: Install just
+        uses: taiki-e/install-action@9534c84618278caac52cb373bb164ed464dbd8af # v2.87.11
+        with:
+          tool: just@1.58.0
       - name: Check repository quality
-        run: make check
+        run: just check
