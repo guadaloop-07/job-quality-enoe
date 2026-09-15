@@ -38,6 +38,7 @@ class LocalConfigurationTests(unittest.TestCase):
                 "0001_metadata_and_staging.sql",
                 "0002_enoe_person_quarter_staging.sql",
                 "0003_analysis_preparation.sql",
+                "0004_database_catalog.sql",
             ],
         )
         source = (MIGRATIONS / migrations[0].name).read_text()
@@ -52,6 +53,9 @@ class LocalConfigurationTests(unittest.TestCase):
         self.assertIn("analysis.enoe_person_quarter_prepared", preparation)
         self.assertIn("source.*", preparation)
         self.assertIn("income_band_state", preparation)
+        catalog = (MIGRATIONS / migrations[3].name).read_text()
+        self.assertIn("metadata.catalog_columns", catalog)
+        self.assertIn("metadata.catalog_lineage", catalog)
 
     def test_migration_command_keeps_password_out_of_arguments(self):
         args = command(Path("private.env"), "isolated-test")
