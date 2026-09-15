@@ -4,6 +4,13 @@
 is blocked for analytical preparation until the SDEM–COE joins and storage key
 are repaired and the approved window is reloaded.**
 
+**Independent-path update on 2026-09-11: source integrity passes for the
+2023 Q1–2025 Q4 core window.** The repository-owned staging table was built
+directly from official archives with the complete official key. All twelve
+quarters reconcile in [the aggregate evidence](official-enoe-reconciliation.md).
+This reopens only the independent source-integrity gate; it does not certify or
+alter the deployed work staging table.
+
 ## What is accepted
 
 - Core period: 2023 Q1–2025 Q4.
@@ -38,7 +45,8 @@ p3i: COE2 is affected, and the nonofficial storage key collides in 2023 Q1 and
 
 ## Reopening criteria
 
-Gate A passes only after all of the following are evidenced:
+For the deployed work table, Gate A remains blocked until all of the following
+are evidenced:
 
 1. The ETL requires the official key with canonical entity naming and validated
    one-to-one joins.
@@ -51,6 +59,12 @@ Gate A passes only after all of the following are evidenced:
 6. The analytical preparation implements the variable rules in
    [the dictionary](variable-dictionary.md) with tests.
 
-Blocks 09–16 and all model work remain stopped. Narrowing the period would not
-resolve the incorrect key: 2023 Q1 already demonstrates storage collisions and
-multiple COE matches, while 2025 Q2 only passes under the current key by chance.
+For the independent 2023–2025 table, criteria 1, 2, 4, and 5 are met through
+the direct archive validation and reconciliation. The scope intentionally ends
+at 2025 Q4, so 2026 Q1–Q2 is not claimed. Criterion 6 remains a requirement of
+the next analytical-preparation issue: source integrity does not itself create
+features, impute values, or authorize model fitting.
+
+Narrowing the period would not resolve the work-table defect: 2023 Q1 already
+demonstrates storage collisions and multiple COE matches, while 2025 Q2 only
+passes under the current key by chance.
