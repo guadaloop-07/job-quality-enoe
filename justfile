@@ -68,3 +68,7 @@ enoe-status:
 
 enoe-manifest:
     uv run --locked python scripts/enoe_ingest.py manifest
+
+enoe-prepare:
+    uv run --locked python scripts/validate_compose_env.py >&2
+    uv run --locked python scripts/enoe_prepare.py

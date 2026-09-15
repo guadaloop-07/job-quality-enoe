@@ -8,8 +8,10 @@ constructs, not official INEGI categories. Analytical code will be added through
 scoped issues. The approved [pilot scope](docs/scope.md) retains 2023–2025 as
 the core window and audits through 2026 Q2. Run the
 [read-only source audit](docs/source-audit.md) before analytical preparation.
-The [Gate A decision](docs/gate-a-decision.md) currently blocks modeling until
-the upstream joins are repaired. See the
+The [Gate A decision](docs/gate-a-decision.md) distinguishes the blocked
+external work staging table from the repository-owned independent official path.
+The latter can proceed through analytical preparation, but modeling remains
+blocked until its preparation rules and evidence pass. See the
 [variable dictionary](docs/variable-dictionary.md) and
 [raw join audit](docs/raw-join-audit.md) for the supporting evidence and
 reopening criteria.
