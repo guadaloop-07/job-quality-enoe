@@ -34,7 +34,11 @@ class LocalConfigurationTests(unittest.TestCase):
         migrations = migration_files()
         self.assertEqual(
             [path.name for path in migrations],
-            ["0001_metadata_and_staging.sql", "0002_enoe_person_quarter_staging.sql"],
+            [
+                "0001_metadata_and_staging.sql",
+                "0002_enoe_person_quarter_staging.sql",
+                "0003_analysis_preparation.sql",
+            ],
         )
         source = (MIGRATIONS / migrations[0].name).read_text()
         self.assertIn("CREATE SCHEMA IF NOT EXISTS metadata", source)
@@ -44,6 +48,10 @@ class LocalConfigurationTests(unittest.TestCase):
         ingestion = (MIGRATIONS / migrations[1].name).read_text()
         self.assertIn("staging.enoe_person_quarter", ingestion)
         self.assertIn("mes_cal", ingestion)
+        preparation = (MIGRATIONS / migrations[2].name).read_text()
+        self.assertIn("analysis.enoe_person_quarter_prepared", preparation)
+        self.assertIn("source.*", preparation)
+        self.assertIn("income_band_state", preparation)
 
     def test_migration_command_keeps_password_out_of_arguments(self):
         args = command(Path("private.env"), "isolated-test")

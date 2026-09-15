@@ -60,10 +60,11 @@ are evidenced:
    [the dictionary](variable-dictionary.md) with tests.
 
 For the independent 2023–2025 table, criteria 1, 2, 4, and 5 are met through
-the direct archive validation and reconciliation. The scope intentionally ends
-at 2025 Q4, so 2026 Q1–Q2 is not claimed. Criterion 6 remains a requirement of
-the next analytical-preparation issue: source integrity does not itself create
-features, impute values, or authorize model fitting.
+the direct archive validation and reconciliation. Criterion 6 is implemented by
+the [analytical-preparation guardrail](analytical-preparation.md), which passed
+for all twelve core periods on 2026-09-15. The scope intentionally ends at 2025
+Q4, so 2026 Q1–Q2 is not claimed. This evidence does not impute values or
+authorize model fitting.
 
 Narrowing the period would not resolve the work-table defect: 2023 Q1 already
 demonstrates storage collisions and multiple COE matches, while 2025 Q2 only
