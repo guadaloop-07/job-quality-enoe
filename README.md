@@ -41,6 +41,12 @@ and versioned migrations. Follow the [local database guide](docs/local-database.
 to start it, preserve its volume, apply migrations, test it, and back it up. Run
 `just --list` to see the available repository recipes.
 
+Official source ingestion is documented separately in the
+[ENOE ingestion guide](docs/official-enoe-ingestion.md). It loads only official
+INEGI archives into the project-owned database; the approved archive hashes are
+in the [source manifest](docs/official-enoe-source-manifest.md) and the loaded
+core window has an aggregate [reconciliation table](docs/official-enoe-reconciliation.md).
+
 ## Contribution workflow
 
 Write repository content, code comments, commits, issues, and PRs in English.

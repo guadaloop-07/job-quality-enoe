@@ -39,3 +39,32 @@ db-down:
 db-config:
     uv run --locked python scripts/validate_compose_env.py
     docker compose --env-file .env -f compose.yaml config --no-interpolate
+
+enoe-download period:
+    uv run --locked python scripts/enoe_ingest.py download {{period}}
+
+enoe-validate period archive:
+    uv run --locked python scripts/enoe_ingest.py validate {{period}} --archive {{archive}}
+
+enoe-ingest period archive:
+    uv run --locked python scripts/validate_compose_env.py >&2
+    uv run --locked python scripts/enoe_ingest.py ingest {{period}} --archive {{archive}}
+
+enoe-ingest-all:
+    uv run --locked python scripts/validate_compose_env.py >&2
+    uv run --locked python scripts/enoe_ingest.py ingest-all
+
+enoe-audit period archive:
+    uv run --locked python scripts/validate_compose_env.py >&2
+    uv run --locked python scripts/enoe_ingest.py audit-staging {{period}} --archive {{archive}}
+
+enoe-audit-all:
+    uv run --locked python scripts/validate_compose_env.py >&2
+    uv run --locked python scripts/enoe_ingest.py audit-all
+
+enoe-status:
+    uv run --locked python scripts/validate_compose_env.py >&2
+    uv run --locked python scripts/enoe_ingest.py status
+
+enoe-manifest:
+    uv run --locked python scripts/enoe_ingest.py manifest
