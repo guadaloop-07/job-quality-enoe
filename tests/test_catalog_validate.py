@@ -13,7 +13,7 @@ class CatalogValidationTests(unittest.TestCase):
     def test_complete_coverage_is_accepted(self):
         self.assertEqual(
             validate_payload({"missing": [], "extra": []}),
-            {"catalog_coverage": "complete", "objects": 2},
+            {"catalog_coverage": "complete", "objects": 3},
         )
 
     def test_missing_physical_column_fails_closed(self):
