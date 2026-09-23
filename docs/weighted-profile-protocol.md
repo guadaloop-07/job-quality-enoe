@@ -66,7 +66,9 @@ applicable. A `NULL` source value is missing, not unspecified.
 `just enoe-profile` returns aggregate evidence only. It validates that the core
 window is complete, weights are positive, official codes are valid, category
 cells reproduce their quarterly unweighted and weighted denominators, and shares
-sum to one. Before emitting a result it suppresses all estimates for cells with
+match their weighted cells and sum to one within a `1e-12` decimal tolerance.
+The tolerance admits only database-division rounding, not a changed weighted
+denominator. Before emitting a result it suppresses all estimates for cells with
 fewer than 30 unweighted person-quarters. A suppressed record retains only its
 period, classifier, category code, category state, and suppression flag; it does
 not expose a count, weight, denominator, or share. This is a minimum disclosure

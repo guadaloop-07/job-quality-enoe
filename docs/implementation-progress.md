@@ -14,9 +14,10 @@ actual deliverables rather than treating the infrastructure baseline as analysis
 | 06 Contract and protection | Complete for Gate A | Use tip_con, pre_asa and seg_soc; exclude p3i as a cross-quarter feature |
 | 07 Join integrity | Complete for independent 2023--2025 staging | Official-key source validation and [aggregate reconciliation](official-enoe-reconciliation.md); work ETL repair remains outside this repository |
 | 08 Nonresponse and Gate A | Complete for the independent table | [Decision](gate-a-decision.md) and [analytical preparation](analytical-preparation.md); the external work table remains blocked |
-| 09–48 | Not started | Independent 2023--2025 preparation evidence now passes; next action is descriptive profiling and profile-design protocol |
+| 09–48 | Not started | Issue #17 implements the weighted descriptive official-classifier protocol. Model fitting remains out of scope; remaining roadmap blocks require separately scoped issues. |
 
-Tracking issues: #3, #5, #7, #8, and #12. No unattended computations remain. Active duration was not
+Tracking issues: #3, #5, #7, #8, #12, and #17. No unattended computations remain. Active duration was not
 instrumented; do not interpret elapsed conversation time as measured work hours.
 The aggregate live query took under five seconds on this run; costs are not
-guaranteed for other databases. Next deliverable: define a weighted descriptive-profile protocol from the prepared independent table; model fitting remains out of scope.
+guaranteed for other databases. The weighted descriptive profile is available
+from the prepared independent table; model fitting remains out of scope.

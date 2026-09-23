@@ -15,6 +15,7 @@ else:
 
 CORE_PERIODS = tuple(f"{year}Q{quarter}" for year in range(2023, 2026) for quarter in range(1, 5))
 MINIMUM_UNWEIGHTED_RECORDS = 30
+SHARE_DECIMAL_TOLERANCE = Decimal("1e-12")
 VALID_STATES = {"valid", "unspecified", "not_applicable", "missing"}
 AUDIT_FIELDS = (
     "invalid_weight",
@@ -108,6 +109,19 @@ def _decimal(row: dict[str, object], field: str) -> Decimal:
         raise ProfileError(f"profile row has invalid {field}") from error
 
 
+def _shares_match_weighted_records(cells: Sequence[dict[str, object]]) -> bool:
+    """Accept only bounded database-division rounding in weighted shares."""
+    denominator_weight = _decimal(cells[0], "denominator_weight")
+    return all(
+        abs(
+            _decimal(cell, "weighted_share")
+            - _decimal(cell, "weighted_records") / denominator_weight
+        )
+        <= SHARE_DECIMAL_TOLERANCE
+        for cell in cells
+    )
+
+
 def report_payload(rows: Sequence[dict[str, object]]) -> dict[str, object]:
     """Verify aggregate denominators and apply disclosure suppression before publication."""
     grouped: dict[tuple[str, str], list[dict[str, object]]] = defaultdict(list)
@@ -156,8 +170,12 @@ def report_payload(rows: Sequence[dict[str, object]]) -> dict[str, object]:
             raise ProfileError("profile output does not preserve the unweighted denominator")
         if sum(_decimal(cell, "weighted_records") for cell in cells) != denominator_weight:
             raise ProfileError("profile output does not preserve the weighted denominator")
-        if sum(_decimal(cell, "weighted_share") for cell in cells) != Decimal("1"):
-            raise ProfileError("profile output shares do not sum to one")
+        if not _shares_match_weighted_records(cells):
+            raise ProfileError("profile output shares do not match weighted records")
+        if abs(sum(_decimal(cell, "weighted_share") for cell in cells) - Decimal("1")) > (
+            SHARE_DECIMAL_TOLERANCE * len(cells)
+        ):
+            raise ProfileError("profile output shares do not sum to one within decimal tolerance")
         for cell in cells:
             result = {
                 "period": period,
