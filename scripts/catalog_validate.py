@@ -21,7 +21,8 @@ WITH physical AS (
     FROM information_schema.columns
     WHERE (table_schema, table_name) IN (
         ('staging', 'enoe_person_quarter'),
-        ('analysis', 'enoe_person_quarter_prepared')
+        ('analysis', 'enoe_person_quarter_prepared'),
+        ('analysis', 'enoe_weighted_profile')
     )
 ), cataloged AS (
     SELECT objects.schema_name, objects.object_name, columns.column_name
@@ -29,6 +30,7 @@ WITH physical AS (
     JOIN metadata.catalog_tables AS objects
         ON objects.catalog_table_id = columns.catalog_table_id
     WHERE objects.is_user_facing
+      AND (objects.schema_name, objects.object_name) IN (SELECT schema_name, object_name FROM physical)
 ), missing AS (
     SELECT * FROM physical EXCEPT SELECT * FROM cataloged
 ), extra AS (
@@ -49,7 +51,7 @@ def validate_payload(payload: dict[str, object]) -> dict[str, object]:
         raise CatalogError("catalog validation returned an invalid structure")
     if missing or extra:
         raise CatalogError(f"catalog coverage drift: missing={missing!r}; extra={extra!r}")
-    return {"catalog_coverage": "complete", "objects": 2}
+    return {"catalog_coverage": "complete", "objects": 3}
 
 
 def validate_catalog() -> dict[str, object]:

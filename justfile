@@ -73,6 +73,10 @@ enoe-prepare:
     uv run --locked python scripts/validate_compose_env.py >&2
     uv run --locked python scripts/enoe_prepare.py
 
+enoe-profile:
+    uv run --locked python scripts/validate_compose_env.py >&2
+    uv run --locked python scripts/enoe_profile.py
+
 catalog-validate:
     uv run --locked python scripts/validate_compose_env.py >&2
     uv run --locked python scripts/catalog_validate.py
