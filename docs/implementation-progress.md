@@ -14,9 +14,9 @@ actual deliverables rather than treating the infrastructure baseline as analysis
 | 06 Contract and protection | Complete for Gate A | Use tip_con, pre_asa and seg_soc; exclude p3i as a cross-quarter feature |
 | 07 Join integrity | Complete for independent 2023--2025 staging | Official-key source validation and [aggregate reconciliation](official-enoe-reconciliation.md); work ETL repair remains outside this repository |
 | 08 Nonresponse and Gate A | Complete for the independent table | [Decision](gate-a-decision.md) and [analytical preparation](analytical-preparation.md); the external work table remains blocked |
-| 09–48 | In progress | Issue #17 implements the weighted descriptive official-classifier protocol; issue #20 adds its reproducible aggregate baseline. Model fitting remains out of scope; remaining roadmap blocks require separately scoped issues. |
+| 09–48 | In progress | Issues #17 and #20 implement the weighted descriptive protocol and aggregate baseline; issue #24 adds readable profile-category metadata. Model fitting remains out of scope; remaining roadmap blocks require separately scoped issues. |
 
-Tracking issues: #3, #5, #7, #8, #12, #17, and #20. No unattended computations remain. Active duration was not
+Tracking issues: #3, #5, #7, #8, #12, #17, #20, and #24. No unattended computations remain. Active duration was not
 instrumented; do not interpret elapsed conversation time as measured work hours.
 The aggregate live query took under five seconds on this run; costs are not
 guaranteed for other databases. The weighted descriptive profile and its

@@ -55,6 +55,19 @@ change.
 previously retained `EMP_PPAL` and `TUE_PPAL`. After applying migration 0005,
 reload each core archive before treating those three fields as observed.
 
+## In-database category catalog
+
+`metadata.profile_classifiers` records the label, source field, original ENOE
+code set where applicable, and derivation rule for every classifier.
+`metadata.profile_categories` records every category emitted by the weighted
+profile, including its readable label and response state. The catalog keeps
+original ENOE codes distinct from project-governed categories such as
+`with_written_contract` and `not_applicable`.
+
+Use `analysis.enoe_weighted_profile_labeled` in DBeaver when a readable
+aggregate result is needed. It joins the immutable profile calculation to this
+metadata and therefore does not alter its denominators, weights, or shares.
+
 ## Missingness and disclosure
 
 The output never folds a response state into a substantive category. SQL keeps

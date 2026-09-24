@@ -40,6 +40,8 @@ class LocalConfigurationTests(unittest.TestCase):
                 "0003_analysis_preparation.sql",
                 "0004_database_catalog.sql",
                 "0005_weighted_profile_protocol.sql",
+                "0006_profile_category_catalog.sql",
+                "0007_profile_duration_category_labels.sql",
             ],
         )
         source = (MIGRATIONS / migrations[0].name).read_text()
@@ -60,6 +62,9 @@ class LocalConfigurationTests(unittest.TestCase):
         profile = (MIGRATIONS / migrations[4].name).read_text()
         self.assertIn("analysis.enoe_weighted_profile", profile)
         self.assertIn("rama", profile)
+        profile_catalog = (MIGRATIONS / migrations[5].name).read_text()
+        self.assertIn("metadata.profile_categories", profile_catalog)
+        self.assertIn("analysis.enoe_weighted_profile_labeled", profile_catalog)
 
     def test_migration_command_keeps_password_out_of_arguments(self):
         args = command(Path("private.env"), "isolated-test")
