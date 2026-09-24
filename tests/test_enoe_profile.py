@@ -12,6 +12,7 @@ from scripts.enoe_profile import (
     MINIMUM_UNWEIGHTED_RECORDS,
     PROFILE_AUDIT_SQL,
     PROFILE_SQL,
+    SHARE_DECIMAL_TOLERANCE,
     ProfileError,
     audit_payload,
     profile_report,
@@ -110,6 +111,30 @@ class ProfileTests(unittest.TestCase):
         rows = valid_rows()
         rows[1]["denominator_weight"] = 3999
         with self.assertRaisesRegex(ProfileError, "inconsistent denominators"):
+            report_payload(rows)
+
+    def test_report_accepts_database_rounded_fractional_shares(self):
+        rows = [
+            {
+                **cell(f"category_{index}", "valid", 100, 1),
+                "denominator_unweighted_records": 300,
+                "denominator_weight": 3,
+                "weighted_share": Decimal("0.33333333333333333333"),
+            }
+            for index in range(3)
+        ]
+
+        report = report_payload(rows)
+
+        self.assertEqual(len(report["estimates"]), 3)
+        self.assertGreater(SHARE_DECIMAL_TOLERANCE, Decimal("1e-20"))
+
+    def test_report_rejects_share_that_does_not_match_weighted_records(self):
+        rows = valid_rows()
+        rows[0]["weighted_share"] = Decimal("0.30")
+        rows[1]["weighted_share"] = Decimal("0.20")
+
+        with self.assertRaisesRegex(ProfileError, "do not match weighted records"):
             report_payload(rows)
 
     def test_database_report_is_aggregate_only(self):
