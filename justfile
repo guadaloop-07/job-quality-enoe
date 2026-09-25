@@ -81,6 +81,12 @@ enoe-baseline:
     uv run --locked python scripts/validate_compose_env.py >&2
     uv run --locked python scripts/enoe_baseline.py
 
+enoe-evaluation-download period:
+    uv run --locked python scripts/enoe_temporal_audit.py download {{period}}
+
+enoe-evaluation-audit:
+    uv run --locked python scripts/enoe_temporal_audit.py audit
+
 catalog-validate:
     uv run --locked python scripts/validate_compose_env.py >&2
     uv run --locked python scripts/catalog_validate.py

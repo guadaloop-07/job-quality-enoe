@@ -22,6 +22,17 @@ Archives remain in ignored local storage; this document contains provenance only
 | 2025 Q3 | 40,062,680 | `d2817a14201694e119a3fd6fcb8b8ed7619ea7e26cf8b353761a1ac1f23d6022` |
 | 2025 Q4 | 43,383,478 | `e675b41bde4fb3c183a0abd067738109c6aaf30ed314bc9fc548669fb8a1565d` |
 
+## Temporal-evaluation candidates (not core)
+
+These archives passed the separate source-integrity audit for the approved
+profile classifiers. They are not part of the 2023Q1--2025Q4 core period and
+must not be loaded into the core staging database or descriptive baseline.
+
+| Period | Archive | Bytes | SHA-256 |
+| --- | --- | ---: | --- |
+| 2026Q1 | `enoe_2026_trim1_csv.zip` | 40,843,186 | `934a1b403d839c9bc777f40ef39f7d0a5b2b43c9852b748b4cd7165bf0f41666` |
+| 2026Q2 | `enoe_2026_trim2_csv.zip` | 35,213,597 | `020811fa989a3e4e3e0daae39b32df6bb055f3ca59653b76ecc454f9b231d91e` |
+
 The loader records the concrete URL, archive name, byte size, SHA-256, local
 retrieval time, and code revision in the repository-owned PostgreSQL metadata
 schema for every loaded period.
