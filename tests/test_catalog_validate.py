@@ -12,8 +12,12 @@ from scripts.catalog_validate import CatalogError, validate_catalog, validate_pa
 class CatalogValidationTests(unittest.TestCase):
     def test_complete_coverage_is_accepted(self):
         self.assertEqual(
-            validate_payload({"missing": [], "extra": []}),
-            {"catalog_coverage": "complete", "objects": 3},
+            validate_payload({"missing": [], "extra": [], "uncataloged_profile_categories": []}),
+            {
+                "catalog_coverage": "complete",
+                "objects": 4,
+                "profile_category_coverage": "complete",
+            },
         )
 
     def test_missing_physical_column_fails_closed(self):
@@ -28,6 +32,7 @@ class CatalogValidationTests(unittest.TestCase):
                         }
                     ],
                     "extra": [],
+                    "uncataloged_profile_categories": [],
                 }
             )
 
@@ -43,13 +48,32 @@ class CatalogValidationTests(unittest.TestCase):
                             "column_name": "removed_field",
                         }
                     ],
+                    "uncataloged_profile_categories": [],
+                }
+            )
+
+    def test_uncataloged_profile_category_fails_closed(self):
+        with self.assertRaisesRegex(CatalogError, "uncataloged_profile_categories"):
+            validate_payload(
+                {
+                    "missing": [],
+                    "extra": [],
+                    "uncataloged_profile_categories": [
+                        {
+                            "classifier": "income_band",
+                            "category_code": "unknown",
+                            "category_state": "invalid",
+                        }
+                    ],
                 }
             )
 
     def test_database_validation_parses_aggregate_only_evidence(self):
         with patch(
             "scripts.catalog_validate.database_sql",
-            return_value=json.dumps({"missing": [], "extra": []}),
+            return_value=json.dumps(
+                {"missing": [], "extra": [], "uncataloged_profile_categories": []}
+            ),
         ):
             self.assertEqual(validate_catalog()["catalog_coverage"], "complete")
 

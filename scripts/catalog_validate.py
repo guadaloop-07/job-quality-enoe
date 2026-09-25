@@ -22,7 +22,8 @@ WITH physical AS (
     WHERE (table_schema, table_name) IN (
         ('staging', 'enoe_person_quarter'),
         ('analysis', 'enoe_person_quarter_prepared'),
-        ('analysis', 'enoe_weighted_profile')
+        ('analysis', 'enoe_weighted_profile'),
+        ('analysis', 'enoe_weighted_profile_labeled')
     )
 ), cataloged AS (
     SELECT objects.schema_name, objects.object_name, columns.column_name
@@ -35,10 +36,20 @@ WITH physical AS (
     SELECT * FROM physical EXCEPT SELECT * FROM cataloged
 ), extra AS (
     SELECT * FROM cataloged EXCEPT SELECT * FROM physical
+), uncataloged_profile_categories AS (
+    SELECT classifier, category_code, category_state
+    FROM analysis.enoe_weighted_profile
+    EXCEPT
+    SELECT classifier, category_code, category_state
+    FROM metadata.profile_categories
 )
 SELECT json_build_object(
     'missing', coalesce((SELECT json_agg(row_to_json(missing)) FROM missing), '[]'::json),
-    'extra', coalesce((SELECT json_agg(row_to_json(extra)) FROM extra), '[]'::json)
+    'extra', coalesce((SELECT json_agg(row_to_json(extra)) FROM extra), '[]'::json),
+    'uncataloged_profile_categories', coalesce(
+        (SELECT json_agg(row_to_json(uncataloged_profile_categories)) FROM uncataloged_profile_categories),
+        '[]'::json
+    )
 )::text;
 """
 
@@ -47,11 +58,23 @@ def validate_payload(payload: dict[str, object]) -> dict[str, object]:
     """Reject incomplete or stale catalog coverage without exposing survey rows."""
     missing = payload.get("missing")
     extra = payload.get("extra")
-    if not isinstance(missing, list) or not isinstance(extra, list):
+    uncataloged = payload.get("uncataloged_profile_categories")
+    if (
+        not isinstance(missing, list)
+        or not isinstance(extra, list)
+        or not isinstance(uncataloged, list)
+    ):
         raise CatalogError("catalog validation returned an invalid structure")
-    if missing or extra:
-        raise CatalogError(f"catalog coverage drift: missing={missing!r}; extra={extra!r}")
-    return {"catalog_coverage": "complete", "objects": 3}
+    if missing or extra or uncataloged:
+        raise CatalogError(
+            "catalog coverage drift: "
+            f"missing={missing!r}; extra={extra!r}; uncataloged_profile_categories={uncataloged!r}"
+        )
+    return {
+        "catalog_coverage": "complete",
+        "objects": 4,
+        "profile_category_coverage": "complete",
+    }
 
 
 def validate_catalog() -> dict[str, object]:
