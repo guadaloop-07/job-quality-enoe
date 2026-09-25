@@ -90,6 +90,11 @@ class MigrationIntegrationTests(unittest.TestCase):
         return result.stdout.strip()
 
     def test_initial_migration_is_idempotent(self):
+        self.query(
+            "DROP SCHEMA IF EXISTS analysis CASCADE; "
+            "DROP SCHEMA IF EXISTS staging CASCADE; "
+            "DROP SCHEMA IF EXISTS metadata CASCADE;"
+        )
         for migration_path in migration_files():
             migration = migration_path.read_text()
             self.query(migration)
