@@ -22,6 +22,11 @@ segmentation's purpose, input roles, temporal split, weighting, and acceptance
 gates. It is a pre-fit guardrail, not authorization to train or publish a
 model.
 
+The [profile-fitting input safeguards](docs/profile-fitting-inputs.md) encode
+the approved dimensions and audit core inputs, repeat-observation candidates,
+and held-out 2026 evaluation archives without materializing microdata or fitting
+a model.
+
 ## Development setup
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and Git:
