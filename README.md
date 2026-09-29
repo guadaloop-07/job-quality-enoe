@@ -10,11 +10,17 @@ the core window and audits through 2026 Q2. Run the
 [read-only source audit](docs/source-audit.md) before analytical preparation.
 The [Gate A decision](docs/gate-a-decision.md) distinguishes the blocked
 external work staging table from the repository-owned independent official path.
-The latter can proceed through analytical preparation, but modeling remains
-blocked until its preparation rules and evidence pass. See the
+The latter passed analytical preparation, but model fitting remains prohibited
+until a separately scoped fitting implementation satisfies the model contract.
+See the
 [variable dictionary](docs/variable-dictionary.md) and
 [raw join audit](docs/raw-join-audit.md) for the supporting evidence and
 reopening criteria.
+
+The [profile-model contract](docs/profile-model-contract.md) fixes the first
+segmentation's purpose, input roles, temporal split, weighting, and acceptance
+gates. It is a pre-fit guardrail, not authorization to train or publish a
+model.
 
 ## Development setup
 
