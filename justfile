@@ -90,6 +90,13 @@ enoe-evaluation-audit:
 profile-model-contract-validate:
     uv run --locked python scripts/profile_model_contract.py
 
+profile-fitting-input-audit:
+    uv run --locked python scripts/validate_compose_env.py >&2
+    uv run --locked python scripts/profile_fitting_inputs.py audit-core
+
+profile-fitting-evaluation-audit:
+    uv run --locked python scripts/profile_fitting_inputs.py audit-evaluation
+
 catalog-validate:
     uv run --locked python scripts/validate_compose_env.py >&2
     uv run --locked python scripts/catalog_validate.py
