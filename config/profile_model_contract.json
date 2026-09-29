@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "fit_status": "contract_only",
+  "model_artifacts_allowed": false,
+  "task": {
+    "kind": "descriptive_weighted_segmentation",
+    "statement": "Identify interpretable, stable patterns of employment conditions; do not predict individual outcomes or rank workers.",
+    "official_category_claim": "prohibited"
+  },
+  "source": {
+    "prepared_view": "analysis.enoe_person_quarter_prepared",
+    "unit_of_analysis": "person-quarter",
+    "domain": "Jalisco statewide only",
+    "universe": "complete interview; accepted residence; age 15-98; occupied; subordinate and paid"
+  },
+  "fit_features": [
+    {
+      "name": "income_band",
+      "encoding": "categorical_response_state",
+      "source_columns": ["income_band", "income_band_state"],
+      "response_states": ["observed_band", "no_income", "unspecified", "missing"]
+    },
+    {
+      "name": "working_time_duration",
+      "encoding": "categorical_response_state",
+      "source_columns": ["dur9c"],
+      "response_states": ["temporary_absence", "duration_band", "unspecified", "missing"]
+    },
+    {
+      "name": "employment_health_access",
+      "encoding": "categorical_response_state",
+      "source_columns": ["has_health_access", "health_access_state"],
+      "response_states": ["with_access", "without_access", "unspecified", "missing"]
+    },
+    {
+      "name": "non_health_benefits",
+      "encoding": "categorical_response_state",
+      "source_columns": ["has_other_benefits", "other_benefits_state"],
+      "response_states": ["with_benefits", "without_benefits", "unspecified", "missing"]
+    },
+    {
+      "name": "contract_status",
+      "encoding": "categorical_response_state",
+      "source_columns": ["has_written_contract", "contract_type", "contract_type_state"],
+      "response_states": [
+        "temporary",
+        "indefinite",
+        "type_unspecified",
+        "without_written_contract",
+        "unspecified",
+        "missing"
+      ]
+    }
+  ],
+  "descriptive_only_fields": {
+    "position_in_occupation": "constant in the approved universe",
+    "employment_formality": "EMP_PPAL; exclude until its role is separately approved",
+    "informal_sector": "TUE_PPAL; exclude until its distinction from EMP_PPAL is resolved",
+    "activity_branch": "RAMA; describe fitted segments only",
+    "occupation_group": "C_OCU11C; describe fitted segments only",
+    "unit_size": "EMPLE7C; describe fitted segments only",
+    "protection_cross_check": "MEDICA5C; do not double-count protection",
+    "questionnaire_specific_contract_field": "P3I; never a cross-quarter feature"
+  },
+  "prohibited_fit_columns": [
+    "analysis_weight",
+    "c_ocu11c",
+    "emp_ppal",
+    "emple7c",
+    "entity",
+    "income_exact",
+    "medica5c",
+    "p3i",
+    "pos_ocu",
+    "rama",
+    "survey_quarter",
+    "survey_year",
+    "tue_ppal",
+    "weekly_hours"
+  ],
+  "missingness": {
+    "imputation": "prohibited",
+    "encoding": "explicit_response_state",
+    "sensitivity_analysis": "Compare the selected solution with a complete-response subset; do not relabel response quality as employment quality."
+  },
+  "weighting": {
+    "source_column": "analysis_weight",
+    "eligibility": "analysis_weight > 0",
+    "fit_normalization": "sum_to_one_within_survey_quarter",
+    "interpretation": "Use original analysis_weight for within-quarter descriptive estimates; do not pool person-quarters into a population total."
+  },
+  "temporal_split": {
+    "development_periods": ["2023Q1", "2023Q2", "2023Q3", "2023Q4", "2024Q1", "2024Q2", "2024Q3", "2024Q4"],
+    "selection_periods": ["2025Q1", "2025Q2", "2025Q3", "2025Q4"],
+    "evaluation_periods": ["2026Q1", "2026Q2"],
+    "evaluation_source": "official_archives_not_staging",
+    "evaluation_rule": "not_in_training_or_selection"
+  },
+  "dependence_control": {
+    "non_temporal_resampling": "prohibited_until_repeat_observation_audit",
+    "selection_design": "quarter_based_temporal_holdout",
+    "evaluation_overlap_audit": "required_before_interpreting_temporal_results"
+  },
+  "candidate_model": {
+    "family": "weighted_latent_class_analysis",
+    "candidate_profile_counts": [2, 3, 4, 5, 6],
+    "selection_order": ["convergence", "temporal_stability", "minimum_weighted_share", "information_criterion", "interpretability"],
+    "minimum_weighted_share": 0.05,
+    "minimum_stability": 0.8
+  },
+  "reproducibility": {
+    "required_run_metadata": ["contract_sha256", "source_archive_sha256", "code_commit", "random_seed", "period_role"],
+    "microdata_in_git": "prohibited",
+    "model_binary_in_git": "prohibited"
+  },
+  "disclosure": {
+    "minimum_unweighted_records": 30,
+    "rule": "Suppress small fitted-profile category estimates and apply INEGI disclosure review before publication."
+  },
+  "out_of_scope": [
+    "individual_prediction",
+    "individual_ranking",
+    "causal_inference",
+    "municipal_profiles",
+    "2026_training",
+    "public_deployment"
+  ]
+}

@@ -87,6 +87,9 @@ enoe-evaluation-download period:
 enoe-evaluation-audit:
     uv run --locked python scripts/enoe_temporal_audit.py audit
 
+profile-model-contract-validate:
+    uv run --locked python scripts/profile_model_contract.py
+
 catalog-validate:
     uv run --locked python scripts/validate_compose_env.py >&2
     uv run --locked python scripts/catalog_validate.py
