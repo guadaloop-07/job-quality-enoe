@@ -35,6 +35,10 @@ The [longitudinal sensitivity policy](docs/profile-longitudinal-sensitivities.md
 fixes a primary temporal split and two fixed-solution robustness analyses;
 model fitting remains prohibited.
 
+The [guarded weighted LCA engine](docs/profile-lca-engine.md) fixes the
+synthetic-only optimization and selection procedure; it cannot fit or serialize
+an ENOE model.
+
 ## Development setup
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and Git:

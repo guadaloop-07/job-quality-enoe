@@ -75,7 +75,8 @@ questionnaire-comparability limit.
 
 ## Remaining authorization gate
 
-The next issue may implement the weighted latent-class optimizer only after it
-names the stability statistic, label-alignment method, multi-start protocol, and
-convergence tolerance. It must then present the resulting evidence for review
-before changing the model contract to allow a fit.
+The [guarded weighted latent-class engine](profile-lca-engine.md) now fixes the
+stability statistic, label alignment, multi-start protocol, and convergence
+tolerance, but it accepts synthetic inputs only. A later issue must review the
+data interface and resulting evidence before changing the model contract to
+allow an ENOE fit.

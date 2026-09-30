@@ -67,6 +67,13 @@ class ProfileModelContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ModelContractError, "sensitivity hierarchy"):
             validate_contract(contract)
 
+    def test_contract_rejects_an_unapproved_optimizer_protocol(self):
+        contract = copy.deepcopy(self.contract)
+        contract["candidate_model"]["optimization_protocol"]["initializations"] = 31
+
+        with self.assertRaisesRegex(ModelContractError, "optimization protocol"):
+            validate_contract(contract)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -107,6 +107,9 @@ enoe-longitudinal-followup-evaluation-audit:
 profile-longitudinal-sensitivity-audit:
     uv run --locked python scripts/profile_longitudinal_sensitivities.py
 
+profile-lca-synthetic-check:
+    uv run --locked python scripts/profile_lca.py synthetic-check
+
 catalog-validate:
     uv run --locked python scripts/validate_compose_env.py >&2
     uv run --locked python scripts/catalog_validate.py

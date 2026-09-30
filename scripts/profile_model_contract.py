@@ -212,6 +212,24 @@ def validate_contract(contract: Mapping[str, object]) -> dict[str, object]:
         raise ModelContractError(
             "candidate acceptance thresholds differ from the approved contract"
         )
+    optimization = _mapping(candidate.get("optimization_protocol"), "optimization_protocol")
+    if dict(optimization) != {
+        "algorithm": "weighted_categorical_em",
+        "initializations": 32,
+        "seed_rule": "base_seed_plus_start_index",
+        "max_iterations": 500,
+        "relative_log_likelihood_tolerance": 1e-8,
+        "probability_floor": 1e-12,
+    }:
+        raise ModelContractError(
+            "candidate optimization protocol differs from the approved contract"
+        )
+    stability = _mapping(candidate.get("stability_protocol"), "stability_protocol")
+    if dict(stability) != {
+        "label_alignment": "minimum_mean_feature_total_variation_over_all_permutations",
+        "statistic": "one_minus_aligned_mean_feature_total_variation",
+    }:
+        raise ModelContractError("candidate stability protocol differs from the approved contract")
 
     reproducibility = _mapping(contract.get("reproducibility"), "reproducibility")
     required_metadata = set(_strings(reproducibility.get("required_run_metadata"), "metadata"))

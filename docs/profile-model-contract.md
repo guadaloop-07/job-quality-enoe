@@ -80,9 +80,11 @@ for accounting and failure conditions.
 ## Candidate family and acceptance gates
 
 The initial candidate family is weighted latent class analysis on the five
-categorical dimensions, with 2–6 candidate profile counts. A future fitting
-issue must implement multi-start convergence checks and may select a solution
-only in this order:
+categorical dimensions, with 2–6 candidate profile counts. The
+[guarded LCA engine](profile-lca-engine.md) fixes the algorithm before it can
+receive ENOE inputs: weighted categorical EM, 32 deterministic starts, 500
+iterations, a relative log-likelihood tolerance of `1e-8`, and a probability
+floor of `1e-12`. It may select a solution only in this order:
 
 1. Convergence and no invalid encoded categories.
 2. Temporal stability, at least 0.80 under the documented stability statistic.
@@ -91,10 +93,10 @@ only in this order:
 5. Plain-language interpretability without defining a profile by missingness
    alone.
 
-The fitting issue must name the exact stability statistic, label-alignment
-method, multi-start protocol, and tolerance before it executes. Those choices
-are implementation details constrained by this contract, not invitations to
-relax its gates after seeing results.
+Stability is one minus the minimum aligned mean feature total-variation
+distance across all class-label permutations. These choices are implementation
+details constrained by this contract, not invitations to relax its gates after
+seeing results.
 
 ## Reproducibility and disclosure
 
@@ -105,5 +107,4 @@ minimum of 30 unweighted records and requires INEGI disclosure review.
 
 The contract prohibits individual prediction or ranking, causal claims,
 municipal profiles, 2026 training, and public deployment. A later issue must
-explicitly authorize fitting after it implements these gates and reviews the
-resulting evidence.
+explicitly authorize ENOE fitting after it reviews the resulting evidence.
