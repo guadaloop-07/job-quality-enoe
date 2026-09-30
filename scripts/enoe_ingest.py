@@ -32,6 +32,7 @@ CORE_PERIODS = tuple((year, quarter) for year in range(2023, 2026) for quarter i
 ENTITY_ALIASES = ("ent", "cve_ent")
 OFFICIAL_KEY = ("tipo", "mes_cal", "cd_a", "entity", "con", "v_sel", "n_hog", "h_mud", "n_ren")
 SDEM_FIELDS = (
+    "n_ent",
     "r_def",
     "c_res",
     "eda",

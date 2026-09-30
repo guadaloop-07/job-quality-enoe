@@ -49,9 +49,12 @@ labels this as an **unapproved candidate signature**, not a longitudinal person
 identifier: its stability across ENOE rotations has not been demonstrated.
 
 Therefore, no non-temporal random split, bootstrap, or resampling is permitted.
-The approved selection design remains a quarter-based temporal holdout. A later
-fitting implementation must perform and document a linkage/overlap audit before
-interpreting temporal results.
+The approved selection design remains a quarter-based temporal holdout. The
+[longitudinal follow-up audit](enoe-longitudinal-followup-audit.md) now retains
+`N_ENT` as visit metadata and reports aggregate adjacent-quarter transitions,
+but still does not approve a linkage or an exclusion policy. A later fitting
+implementation must obtain that methodological decision before interpreting
+temporal results.
 
 ## Held-out 2026 interface
 
