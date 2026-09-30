@@ -31,6 +31,10 @@ The [longitudinal follow-up audit](docs/enoe-longitudinal-followup-audit.md)
 retains `N_ENT` only as visit metadata and reports aggregate candidate-repeat
 diagnostics before any leakage-exclusion decision.
 
+The [longitudinal sensitivity policy](docs/profile-longitudinal-sensitivities.md)
+fixes a primary temporal split and two fixed-solution robustness analyses;
+model fitting remains prohibited.
+
 ## Development setup
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and Git:

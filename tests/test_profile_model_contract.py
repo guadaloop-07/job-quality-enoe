@@ -58,6 +58,15 @@ class ProfileModelContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ModelContractError, "out-of-scope protections"):
             validate_contract(contract)
 
+    def test_contract_rejects_sensitivity_analysis_that_reopens_model_selection(self):
+        contract = copy.deepcopy(self.contract)
+        contract["dependence_control"]["longitudinal_sensitivity_hierarchy"]["model_selection"] = (
+            "all_analyses"
+        )
+
+        with self.assertRaisesRegex(ModelContractError, "sensitivity hierarchy"):
+            validate_contract(contract)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -64,9 +64,18 @@ each quarter equal influence without treating pooled person-quarters as a
 population total. Within-quarter descriptive estimates continue to use the
 original weights.
 
-Non-temporal random resampling is prohibited until a repeat-observation audit
-documents a defensible linkage rule. Selection is quarter-based, and any future
-temporal interpretation requires an overlap audit for repeat observations.
+Non-temporal random resampling remains prohibited. Selection is quarter-based,
+with the following predeclared longitudinal hierarchy:
+
+| Analysis | Rule | Role |
+|---|---|---|
+| Primary | Exclude target-role signatures anchored by an unambiguous adjacent `N_ENT` increment across the relevant role boundary. | The only analysis allowed to select a candidate solution. |
+| Sensitivity A | Keep the complete temporal target-role universe. | Fixed-solution robustness only. |
+| Sensitivity B | Exclude all target-role candidate signatures found in any prior role. | Conservative fixed-solution robustness only. |
+
+Candidate signatures remain technical follow-up diagnostics, not person
+identifiers. See the [longitudinal sensitivity policy](profile-longitudinal-sensitivities.md)
+for accounting and failure conditions.
 
 ## Candidate family and acceptance gates
 

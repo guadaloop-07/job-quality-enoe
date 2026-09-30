@@ -42,6 +42,13 @@ SELECTION_ORDER = (
     "information_criterion",
     "interpretability",
 )
+LONGITUDINAL_SENSITIVITY_HIERARCHY = {
+    "primary": "exclude_target_role_signatures_anchored_by_unambiguous_adjacent_n_ent_increment",
+    "sensitivity_a": "complete_temporal_target_role_universe",
+    "sensitivity_b": "exclude_all_candidate_signature_matches_with_any_prior_role",
+    "model_selection": "primary_only",
+    "sensitivity_role": "fixed_solution_robustness_only",
+}
 OUT_OF_SCOPE = {
     "individual_prediction",
     "individual_ranking",
@@ -185,6 +192,14 @@ def validate_contract(contract: Mapping[str, object]) -> dict[str, object]:
         != "required_before_interpreting_temporal_results"
     ):
         raise ModelContractError("repeat-observation safeguards are incomplete")
+    hierarchy = _mapping(
+        dependence.get("longitudinal_sensitivity_hierarchy"),
+        "longitudinal_sensitivity_hierarchy",
+    )
+    if dict(hierarchy) != LONGITUDINAL_SENSITIVITY_HIERARCHY:
+        raise ModelContractError(
+            "longitudinal sensitivity hierarchy differs from the approved policy"
+        )
 
     candidate = _mapping(contract.get("candidate_model"), "candidate_model")
     if candidate.get("family") != "weighted_latent_class_analysis":

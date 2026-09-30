@@ -61,15 +61,14 @@ candidate keys, or treating evaluation data as training data.
 ## Interpretation gate
 
 Both commands always return `candidate_signature_is_approved_linkage: false`
-and `leakage_exclusion_approved: false`. The output is evidence for a later
-methodological decision, not authorization to exclude observations, randomly
-resample, fit a model, or report individual follow-up histories.
+and `leakage_exclusion_approved: false`. The output is evidence for the
+predeclared [longitudinal sensitivity policy](profile-longitudinal-sensitivities.md),
+not nominal linkage, permission to randomly resample, authorization to fit a
+model, or individual follow-up histories.
 
-Before authorizing a leakage-exclusion rule, review the aggregate transition
-rates, signature ambiguity, residence-change implications, and whether the
-rule should exclude all cross-role candidate matches or only validated
-adjacent-visit transitions. Retain the all-selection estimate as a sensitivity
-comparison if a later rule is approved.
+The policy retains the all-selection estimate and an intentionally conservative
+cross-role exclusion as fixed-solution sensitivity comparisons. It does not
+relax the fitting authorization gate.
 
 ## Reviewed aggregate evidence
 
