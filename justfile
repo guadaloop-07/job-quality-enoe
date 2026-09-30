@@ -97,6 +97,13 @@ profile-fitting-input-audit:
 profile-fitting-evaluation-audit:
     uv run --locked python scripts/profile_fitting_inputs.py audit-evaluation
 
+enoe-longitudinal-followup-audit:
+    uv run --locked python scripts/validate_compose_env.py >&2
+    uv run --locked python scripts/enoe_longitudinal_audit.py audit-core
+
+enoe-longitudinal-followup-evaluation-audit:
+    uv run --locked python scripts/enoe_longitudinal_audit.py audit-evaluation
+
 catalog-validate:
     uv run --locked python scripts/validate_compose_env.py >&2
     uv run --locked python scripts/catalog_validate.py

@@ -123,6 +123,13 @@ class IngestionContractTests(unittest.TestCase):
         self.assertIn("mes_cal", OFFICIAL_KEY)
         self.assertIn("mes_cal", transaction_sql(validated))
 
+    def test_interview_visit_metadata_is_required_and_retained_for_staging(self):
+        archive(self.path)
+        validated = validate_archive(self.period, self.path)
+
+        self.assertEqual(validated.records[0]["n_ent"], "1")
+        self.assertIn("n_ent", transaction_sql(validated))
+
     def test_other_entity_cannot_supply_a_reduced_key_match(self):
         other = row("COE1", entity="13", p3i="wrong")
         archive(self.path, coe1=[other, row("COE1", p3i="correct")])

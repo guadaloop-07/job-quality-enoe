@@ -27,6 +27,10 @@ the approved dimensions and audit core inputs, repeat-observation candidates,
 and held-out 2026 evaluation archives without materializing microdata or fitting
 a model.
 
+The [longitudinal follow-up audit](docs/enoe-longitudinal-followup-audit.md)
+retains `N_ENT` only as visit metadata and reports aggregate candidate-repeat
+diagnostics before any leakage-exclusion decision.
+
 ## Development setup
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and Git:
