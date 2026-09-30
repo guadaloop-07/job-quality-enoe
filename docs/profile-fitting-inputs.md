@@ -52,9 +52,10 @@ Therefore, no non-temporal random split, bootstrap, or resampling is permitted.
 The approved selection design remains a quarter-based temporal holdout. The
 [longitudinal follow-up audit](enoe-longitudinal-followup-audit.md) now retains
 `N_ENT` as visit metadata and reports aggregate adjacent-quarter transitions,
-but still does not approve a linkage or an exclusion policy. A later fitting
-implementation must obtain that methodological decision before interpreting
-temporal results.
+but does not turn its candidate signature into nominal linkage. The approved
+[longitudinal sensitivity policy](profile-longitudinal-sensitivities.md) fixes
+the primary and two robustness analyses; a later fitting implementation must
+apply that hierarchy without reopening model selection.
 
 ## Held-out 2026 interface
 

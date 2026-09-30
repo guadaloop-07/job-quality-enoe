@@ -99,7 +99,14 @@
   "dependence_control": {
     "non_temporal_resampling": "prohibited_until_repeat_observation_audit",
     "selection_design": "quarter_based_temporal_holdout",
-    "evaluation_overlap_audit": "required_before_interpreting_temporal_results"
+    "evaluation_overlap_audit": "required_before_interpreting_temporal_results",
+    "longitudinal_sensitivity_hierarchy": {
+      "primary": "exclude_target_role_signatures_anchored_by_unambiguous_adjacent_n_ent_increment",
+      "sensitivity_a": "complete_temporal_target_role_universe",
+      "sensitivity_b": "exclude_all_candidate_signature_matches_with_any_prior_role",
+      "model_selection": "primary_only",
+      "sensitivity_role": "fixed_solution_robustness_only"
+    }
   },
   "candidate_model": {
     "family": "weighted_latent_class_analysis",

@@ -104,6 +104,9 @@ enoe-longitudinal-followup-audit:
 enoe-longitudinal-followup-evaluation-audit:
     uv run --locked python scripts/enoe_longitudinal_audit.py audit-evaluation
 
+profile-longitudinal-sensitivity-audit:
+    uv run --locked python scripts/profile_longitudinal_sensitivities.py
+
 catalog-validate:
     uv run --locked python scripts/validate_compose_env.py >&2
     uv run --locked python scripts/catalog_validate.py
