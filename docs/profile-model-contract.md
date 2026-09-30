@@ -1,8 +1,9 @@
 # Profile-model contract
 
-Issue #28 records the decisions that must govern the first model implementation.
-It is a **pre-fit contract**: it specifies a descriptive weighted segmentation,
-but does not fit, select, serialize, publish, or deploy a model. The
+Issue #28 records the decisions that govern the first model implementation.
+Issue #38 authorizes only a **guarded empirical candidate dossier**: it may fit
+and compare candidates, but may not persist a model, publish a profile, score
+individuals, or deploy anything. The
 machine-readable source of truth is
 [`config/profile_model_contract.json`](../config/profile_model_contract.json).
 Run `just profile-model-contract-validate` to fail closed if that contract is
@@ -81,8 +82,9 @@ for accounting and failure conditions.
 
 The initial candidate family is weighted latent class analysis on the five
 categorical dimensions, with 2–6 candidate profile counts. The
-[guarded LCA engine](profile-lca-engine.md) fixes the algorithm before it can
-receive ENOE inputs: weighted categorical EM, 32 deterministic starts, 500
+[guarded LCA engine](profile-lca-engine.md) fixes the algorithm; the
+[first guarded empirical fit](first-guarded-empirical-fit.md) supplies its only
+authorized ENOE interface. It uses weighted categorical EM, 32 deterministic starts, 500
 iterations, a relative log-likelihood tolerance of `1e-8`, and a probability
 floor of `1e-12`. It may select a solution only in this order:
 
@@ -94,9 +96,11 @@ floor of `1e-12`. It may select a solution only in this order:
    alone.
 
 Stability is one minus the minimum aligned mean feature total-variation
-distance across all class-label permutations. These choices are implementation
-details constrained by this contract, not invitations to relax its gates after
-seeing results.
+distance across all class-label permutations. For the first dossier it is the
+minimum comparison of a pooled development fit with each primary selection
+quarter. The information-criterion gate is Kish-rescaled survey pseudo-BIC
+summed across selection quarters. These choices are constrained by this
+contract, not invitations to relax gates after seeing results.
 
 ## Reproducibility and disclosure
 
@@ -106,5 +110,6 @@ outside Git. Any published fitted-profile category estimate follows the current
 minimum of 30 unweighted records and requires INEGI disclosure review.
 
 The contract prohibits individual prediction or ranking, causal claims,
-municipal profiles, 2026 training, and public deployment. A later issue must
-explicitly authorize ENOE fitting after it reviews the resulting evidence.
+municipal profiles, 2026 training, and public deployment. The first dossier's
+pseudo-BIC winner still requires documented human interpretability review;
+only then may fixed-solution robustness and final held-out evaluation proceed.

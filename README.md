@@ -39,6 +39,11 @@ The [guarded weighted LCA engine](docs/profile-lca-engine.md) fixes the
 synthetic-only optimization and selection procedure; it cannot fit or serialize
 an ENOE model.
 
+The [first guarded empirical fit](docs/first-guarded-empirical-fit.md) is the
+sole controlled ENOE candidate-dossier interface. It keeps data ephemeral and
+requires preflight evidence; no candidate becomes a published model without a
+separate documented interpretability decision.
+
 ## Development setup
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and Git:

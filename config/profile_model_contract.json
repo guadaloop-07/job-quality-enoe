@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "fit_status": "contract_only",
+  "fit_status": "authorized_guarded_empirical_fit",
   "model_artifacts_allowed": false,
   "task": {
     "kind": "descriptive_weighted_segmentation",
@@ -126,6 +126,16 @@
       "label_alignment": "minimum_mean_feature_total_variation_over_all_permutations",
       "statistic": "one_minus_aligned_mean_feature_total_variation"
     }
+  },
+  "empirical_fit_authorization": {
+    "allowed_commands": ["profile-lca-candidate-dossier", "profile-lca-fixed-robustness"],
+    "input_transport": "read_only_ephemeral_encoded_person_quarter_rows",
+    "selection_analysis": "primary_only",
+    "information_criterion": "kish_rescaled_survey_pseudo_bic",
+    "temporal_stability_aggregation": "minimum_development_to_each_primary_selection_quarter_alignment",
+    "interpretability_rule": "documented_label_supported_by_two_substantive_dimensions_not_response_states_alone",
+    "complete_response_and_sensitivity_role": "fixed_solution_robustness_only_after_primary_selection",
+    "evaluation_rule": "2026_after_specification_freeze_only"
   },
   "reproducibility": {
     "required_run_metadata": ["contract_sha256", "source_archive_sha256", "code_commit", "random_seed", "period_role"],
