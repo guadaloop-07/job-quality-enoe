@@ -57,6 +57,16 @@ OUT_OF_SCOPE = {
     "2026_training",
     "public_deployment",
 }
+EMPIRICAL_FIT_AUTHORIZATION = {
+    "allowed_commands": ["profile-lca-candidate-dossier", "profile-lca-fixed-robustness"],
+    "input_transport": "read_only_ephemeral_encoded_person_quarter_rows",
+    "selection_analysis": "primary_only",
+    "information_criterion": "kish_rescaled_survey_pseudo_bic",
+    "temporal_stability_aggregation": "minimum_development_to_each_primary_selection_quarter_alignment",
+    "interpretability_rule": "documented_label_supported_by_two_substantive_dimensions_not_response_states_alone",
+    "complete_response_and_sensitivity_role": "fixed_solution_robustness_only_after_primary_selection",
+    "evaluation_rule": "2026_after_specification_freeze_only",
+}
 
 
 class ModelContractError(ValueError):
@@ -95,10 +105,10 @@ def validate_contract(contract: Mapping[str, object]) -> dict[str, object]:
     if contract.get("schema_version") != "1.0":
         raise ModelContractError("unsupported model contract schema version")
     if (
-        contract.get("fit_status") != "contract_only"
+        contract.get("fit_status") != "authorized_guarded_empirical_fit"
         or contract.get("model_artifacts_allowed") is not False
     ):
-        raise ModelContractError("the model contract must not authorize fitting")
+        raise ModelContractError("the model contract must authorize only the guarded empirical fit")
 
     task = _mapping(contract.get("task"), "task")
     if task.get("kind") != "descriptive_weighted_segmentation":
@@ -231,6 +241,12 @@ def validate_contract(contract: Mapping[str, object]) -> dict[str, object]:
     }:
         raise ModelContractError("candidate stability protocol differs from the approved contract")
 
+    authorization = _mapping(
+        contract.get("empirical_fit_authorization"), "empirical_fit_authorization"
+    )
+    if dict(authorization) != EMPIRICAL_FIT_AUTHORIZATION:
+        raise ModelContractError("empirical fit authorization differs from the approved protocol")
+
     reproducibility = _mapping(contract.get("reproducibility"), "reproducibility")
     required_metadata = set(_strings(reproducibility.get("required_run_metadata"), "metadata"))
     if required_metadata != {
@@ -256,7 +272,7 @@ def validate_contract(contract: Mapping[str, object]) -> dict[str, object]:
         raise ModelContractError("out-of-scope protections differ from the approved contract")
     return {
         "contract_validated": True,
-        "fit_status": "contract_only",
+        "fit_status": "authorized_guarded_empirical_fit",
         "fit_features": sorted(names),
         "development_periods": list(development),
         "selection_periods": list(selection),

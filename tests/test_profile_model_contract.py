@@ -12,11 +12,11 @@ class ProfileModelContractTests(unittest.TestCase):
     def setUp(self) -> None:
         self.contract = load_contract()
 
-    def test_repository_contract_is_valid_and_does_not_authorize_fitting(self):
+    def test_repository_contract_is_valid_and_authorizes_only_guarded_fitting(self):
         result = validate_contract(self.contract)
 
         self.assertTrue(result["contract_validated"])
-        self.assertEqual(result["fit_status"], "contract_only")
+        self.assertEqual(result["fit_status"], "authorized_guarded_empirical_fit")
         self.assertEqual(result["evaluation_periods"], ["2026Q1", "2026Q2"])
 
     def test_aggregate_profile_cannot_replace_person_quarter_model_input(self):
@@ -46,7 +46,7 @@ class ProfileModelContractTests(unittest.TestCase):
         missing_contract = copy.deepcopy(self.contract)
         missing_contract["missingness"]["imputation"] = "mode"
 
-        with self.assertRaisesRegex(ModelContractError, "must not authorize fitting"):
+        with self.assertRaisesRegex(ModelContractError, "must authorize only"):
             validate_contract(fit_contract)
         with self.assertRaisesRegex(ModelContractError, "prohibit substantive imputation"):
             validate_contract(missing_contract)
