@@ -47,9 +47,10 @@ The dossier reports convergence, per-quarter stability, minimum weighted share,
 pseudo-BIC, reproducibility metadata, and aggregate conditional response
 probabilities for review. It does not automatically select a profile count:
 the pseudo-BIC winner remains pending a documented interpretability decision.
-That decision must give a plain-language label supported by at least two
-substantive dimensions; missing, unspecified, and response-quality states alone
-cannot define a profile.
+That decision must follow the [empirical LCA interpretability review
+protocol](empirical-lca-interpretability-review.md), including a plain-language
+label supported by at least two substantive dimensions. Missing, unspecified,
+and response-quality states alone cannot define a profile.
 
 After that review, the chosen K is fixed. Complete-response, sensitivity A, and
 sensitivity B analyses may assess that fixed solution only; they cannot choose

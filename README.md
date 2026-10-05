@@ -43,6 +43,8 @@ The [first guarded empirical fit](docs/first-guarded-empirical-fit.md) is the
 sole controlled ENOE candidate-dossier interface. It keeps data ephemeral and
 requires preflight evidence; no candidate becomes a published model without a
 separate documented interpretability decision.
+The [interpretability review protocol](docs/empirical-lca-interpretability-review.md)
+pre-specifies that decision before the dossier is run.
 
 ## Development setup
 
