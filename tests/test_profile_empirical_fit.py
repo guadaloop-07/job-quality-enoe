@@ -12,6 +12,7 @@ from scripts.profile_empirical_fit import (
     _archive_hashes,
     _input_sql,
     _normalized_rows,
+    _renormalize_rows,
     candidate_dossier,
     fixed_solution_robustness,
 )
@@ -84,6 +85,24 @@ class EmpiricalFitTests(unittest.TestCase):
         for period_rows in normalized.values():
             self.assertEqual(sum(row["weight"] for row in period_rows), 1.0)
             self.assertTrue(all(set(row) == {"tokens", "weight"} for row in period_rows))
+
+    def test_complete_response_subset_is_renormalized_within_its_quarter(self):
+        tokens = {
+            "income_band": "income_band_5",
+            "working_time_duration": "duration_6",
+            "employment_health_access": "with_access",
+            "non_health_benefits": "with_benefits",
+            "contract_status": "indefinite",
+        }
+        rows = [
+            {"tokens": tokens, "weight": 0.2},
+            {"tokens": tokens, "weight": 0.3},
+        ]
+
+        normalized = _renormalize_rows(rows, "2023Q1")
+
+        self.assertEqual([row["weight"] for row in normalized], [0.4, 0.6])
+        self.assertEqual(sum(row["weight"] for row in normalized), 1.0)
 
     def test_candidate_dossier_is_primary_only_and_does_not_emit_raw_input_rows(self):
         normalized = {

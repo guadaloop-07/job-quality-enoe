@@ -146,6 +146,19 @@ def _authorized_contract() -> dict[str, object]:
     return contract
 
 
+def _renormalize_rows(rows: Sequence[Mapping[str, object]], period: str) -> list[dict[str, object]]:
+    total = sum((Decimal(str(row["weight"])) for row in rows), Decimal())
+    if total <= 0:
+        raise EmpiricalFitError(f"{period}: normalized input has no positive weight")
+    return [
+        {
+            "tokens": dict(row["tokens"]),
+            "weight": float(Decimal(str(row["weight"])) / total),
+        }
+        for row in rows
+    ]
+
+
 def _normalized_rows(rows: Sequence[Mapping[str, object]]) -> dict[str, list[dict[str, object]]]:
     encoded = [encode_feature_row(row) for row in rows]
     grouped: dict[str, list[Mapping[str, object]]] = defaultdict(list)
@@ -154,20 +167,7 @@ def _normalized_rows(rows: Sequence[Mapping[str, object]]) -> dict[str, list[dic
     expected = DEVELOPMENT_PERIODS + SELECTION_PERIODS
     if tuple(sorted(grouped)) != expected:
         raise EmpiricalFitError("empirical fit input has incomplete or unexpected periods")
-    normalized: dict[str, list[dict[str, object]]] = {}
-    for period in expected:
-        period_rows = grouped[period]
-        total = sum((Decimal(str(row["weight"])) for row in period_rows), Decimal())
-        if total <= 0:
-            raise EmpiricalFitError(f"{period}: normalized input has no positive weight")
-        normalized[period] = [
-            {
-                "tokens": dict(row["tokens"]),
-                "weight": float(Decimal(str(row["weight"])) / total),
-            }
-            for row in period_rows
-        ]
-    return normalized
+    return {period: _renormalize_rows(grouped[period], period) for period in expected}
 
 
 def read_fit_inputs(mode: str) -> dict[str, list[dict[str, object]]]:
@@ -395,7 +395,7 @@ def fixed_solution_robustness(
     if any(tuple(sorted(rows)) != expected for rows in analyses.values()):
         raise EmpiricalFitError("fixed-solution robustness has incomplete temporal inputs")
     primary = analyses["primary"]
-    complete = {
+    complete_raw = {
         period: [
             row
             for row in primary[period]
@@ -403,8 +403,9 @@ def fixed_solution_robustness(
         ]
         for period in expected
     }
-    if any(not rows for rows in complete.values()):
+    if any(not rows for rows in complete_raw.values()):
         raise EmpiricalFitError("complete-response robustness has an empty quarter")
+    complete = {period: _renormalize_rows(rows, period) for period, rows in complete_raw.items()}
     return {
         "fit_authorized": True,
         "selection_analysis": "primary_only_already_reviewed",
