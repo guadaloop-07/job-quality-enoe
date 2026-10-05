@@ -36,6 +36,7 @@ class LCAFit:
 
 def _inputs(
     rows: Sequence[Mapping[str, object]],
+    categories: tuple[tuple[str, ...], ...] | None = None,
 ) -> tuple[np.ndarray, np.ndarray, tuple[tuple[str, ...], ...]]:
     if not rows:
         raise LCAError("LCA requires at least one encoded row")
@@ -57,13 +58,25 @@ def _inputs(
             raise LCAError("LCA weight must be positive")
         tokens.append([str(values[feature]) for feature in FIT_FEATURES])
         weights.append(weight)
-    categories = tuple(
+    observed_categories = tuple(
         tuple(sorted({row[index] for row in tokens})) for index in range(len(FIT_FEATURES))
     )
+    if categories is None:
+        categories = observed_categories
+    if len(categories) != len(FIT_FEATURES) or any(
+        not values or any(value not in values for value in observed)
+        for values, observed in zip(categories, observed_categories, strict=True)
+    ):
+        raise LCAError("LCA category definitions must cover every observed token")
     encoded = np.asarray(
         [[categories[index].index(value) for index, value in enumerate(row)] for row in tokens]
     )
     return encoded, np.asarray(weights), categories
+
+
+def category_definitions(rows: Sequence[Mapping[str, object]]) -> tuple[tuple[str, ...], ...]:
+    """Return validated categorical support for comparable LCA fits."""
+    return _inputs(rows)[2]
 
 
 def _logsumexp(values: np.ndarray) -> np.ndarray:
@@ -76,12 +89,13 @@ def fit_weighted_lca(
     k: int,
     seed: int,
     *,
+    categories: tuple[tuple[str, ...], ...] | None = None,
     max_iterations: int = 500,
     tolerance: float = 1e-8,
     floor: float = 1e-12,
 ) -> LCAFit:
     """Fit one weighted categorical LCA start entirely in memory."""
-    encoded, weights, categories = _inputs(rows)
+    encoded, weights, categories = _inputs(rows, categories)
     if k not in range(2, 7) or k > len(encoded):
         raise LCAError("LCA class count must be 2--6 and no greater than input rows")
     rng = np.random.default_rng(seed)
@@ -114,10 +128,16 @@ def fit_weighted_lca(
 
 
 def fit_multistart(
-    rows: Sequence[Mapping[str, object]], k: int, base_seed: int
+    rows: Sequence[Mapping[str, object]],
+    k: int,
+    base_seed: int,
+    *,
+    categories: tuple[tuple[str, ...], ...] | None = None,
 ) -> tuple[LCAFit, int]:
     """Run the contract-fixed 32 deterministic starts and keep the best converged fit."""
-    fits = [fit_weighted_lca(rows, k, base_seed + start) for start in range(32)]
+    fits = [
+        fit_weighted_lca(rows, k, base_seed + start, categories=categories) for start in range(32)
+    ]
     converged = [fit for fit in fits if fit.converged]
     if not converged:
         raise LCAError("no LCA start converged")
