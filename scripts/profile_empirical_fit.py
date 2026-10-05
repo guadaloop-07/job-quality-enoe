@@ -21,7 +21,12 @@ if __package__:
         core_input_audit,
         encode_feature_row,
     )
-    from scripts.profile_lca import LCAError, aligned_stability, fit_multistart
+    from scripts.profile_lca import (
+        LCAError,
+        aligned_stability,
+        category_definitions,
+        fit_multistart,
+    )
     from scripts.profile_longitudinal_sensitivities import audit_official_archives
     from scripts.profile_model_contract import load_contract, validate_contract
 else:
@@ -32,7 +37,7 @@ else:
         core_input_audit,
         encode_feature_row,
     )
-    from profile_lca import LCAError, aligned_stability, fit_multistart
+    from profile_lca import LCAError, aligned_stability, category_definitions, fit_multistart
     from profile_longitudinal_sensitivities import audit_official_archives
     from profile_model_contract import load_contract, validate_contract
 
@@ -264,12 +269,22 @@ def _candidate_summary(
     normalized: Mapping[str, Sequence[Mapping[str, object]]], k: int, base_seed: int
 ) -> dict[str, object]:
     development = [row for period in DEVELOPMENT_PERIODS for row in normalized[period]]
+    categories = category_definitions(
+        [row for period in DEVELOPMENT_PERIODS + SELECTION_PERIODS for row in normalized[period]]
+    )
     try:
-        reference, reference_converged = fit_multistart(development, k, base_seed + k * 100)
+        reference, reference_converged = fit_multistart(
+            development, k, base_seed + k * 100, categories=categories
+        )
         quarterly = [
             (
                 period,
-                *fit_multistart(normalized[period], k, base_seed + k * 1000 + index),
+                *fit_multistart(
+                    normalized[period],
+                    k,
+                    base_seed + k * 1000 + index,
+                    categories=categories,
+                ),
             )
             for index, period in enumerate(SELECTION_PERIODS)
         ]

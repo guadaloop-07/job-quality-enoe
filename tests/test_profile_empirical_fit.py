@@ -37,8 +37,8 @@ def _raw_row(period: str, weight: int = 1) -> dict[str, object]:
     }
 
 
-def _fit(rows, k, seed):
-    categories = tuple(("a", "b") for _ in range(5))
+def _fit(rows, k, seed, *, categories=None):
+    categories = categories or tuple(("a", "b") for _ in range(5))
     probabilities = tuple(np.tile((0.8, 0.2), (k, 1)) for _ in range(5))
     return (
         LCAFit(

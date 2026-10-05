@@ -10,6 +10,7 @@ from scripts.profile_lca import (
     LCAError,
     LCAFit,
     aligned_stability,
+    category_definitions,
     disclosure_ready,
     fit_multistart,
     fit_weighted_lca,
@@ -76,6 +77,21 @@ class ProfileLCATests(unittest.TestCase):
         )
 
         self.assertEqual(aligned_stability(reference, permuted), 1.0)
+
+    def test_shared_category_definitions_align_fits_with_an_absent_quarterly_token(self):
+        rows = synthetic_rows()
+        categories = category_definitions(rows)
+        reference = fit_weighted_lca(rows, 2, 1, categories=categories, max_iterations=1)
+        comparison = fit_weighted_lca(
+            [row for row in rows if row["tokens"]["income_band"] != "income_band_5"],
+            2,
+            2,
+            categories=categories,
+            max_iterations=1,
+        )
+
+        self.assertEqual(reference.categories, comparison.categories)
+        self.assertIsInstance(aligned_stability(reference, comparison), float)
 
     def test_selection_uses_gates_in_predeclared_order(self):
         diagnostics = [
