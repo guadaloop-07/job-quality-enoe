@@ -64,6 +64,14 @@ class EmpiricalFitTests(unittest.TestCase):
         self.assertNotIn("'n_ent'", result_projection)
         self.assertIn("source.survey_year IN (2025)", query)
 
+    def test_primary_sql_reads_visit_sequence_from_staging(self):
+        query = _input_sql("primary", "selection")
+        anchored_selection, _ = query.split("), input_rows AS", maxsplit=1)
+
+        self.assertIn("FROM staging.enoe_person_quarter AS previous", anchored_selection)
+        self.assertIn("JOIN staging.enoe_person_quarter AS following", anchored_selection)
+        self.assertNotIn("analysis.enoe_person_quarter_prepared AS previous", anchored_selection)
+
     def test_normalization_retains_only_tokens_and_quarter_normalized_weight(self):
         rows = [
             _raw_row(period, 1)

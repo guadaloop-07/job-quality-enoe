@@ -96,8 +96,8 @@ WITH development_signatures AS (
 ), anchored_selection AS (
     SELECT DISTINCT following.entity, following.cd_a, following.con, following.v_sel,
         following.n_hog, following.h_mud, following.n_ren
-    FROM analysis.enoe_person_quarter_prepared AS previous
-    JOIN analysis.enoe_person_quarter_prepared AS following
+    FROM staging.enoe_person_quarter AS previous
+    JOIN staging.enoe_person_quarter AS following
         ON (previous.entity, previous.cd_a, previous.con, previous.v_sel, previous.n_hog,
             previous.h_mud, previous.n_ren)
             = (following.entity, following.cd_a, following.con, following.v_sel,
