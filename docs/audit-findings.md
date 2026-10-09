@@ -1,5 +1,12 @@
 # ENOE source audit findings
 
+> **Historical external-ETL evidence.** This document records findings from the
+> deployed work staging table inspected in September 2026. Its blocking result
+> applies to that ETL only, not to the repository-owned independent 2023 Q1--
+> 2025 Q4 path subsequently built from official archives. For the current
+> decision and authorized uses, see the [Gate A decision](gate-a-decision.md)
+> and the [independent reconciliation](official-enoe-reconciliation.md).
+
 ## Gate A follow-up — 2026-09-10
 
 The official INEGI resident key is one-to-one and complete in the inspected
@@ -33,8 +40,9 @@ both paths are ignored by Git. The staged-audit query SHA-256 is
 
 ## Initial staging audit — 2026-09-08
 
-The approved window is technically accessible, but Gate A is **not passed**.
-Continue semantic and upstream join checks before model preparation.
+The approved window was technically accessible, but Gate A was **not passed for
+the deployed work ETL**. The later independent path is governed separately by
+the [Gate A decision](gate-a-decision.md).
 
 ## Evidence and scope
 

@@ -7,20 +7,25 @@ subject to validating data coverage and comparability. Profiles are analytical
 constructs, not official INEGI categories. Analytical code will be added through
 scoped issues. The approved [pilot scope](docs/scope.md) retains 2023–2025 as
 the core window and audits through 2026 Q2. Run the
-[read-only source audit](docs/source-audit.md) before analytical preparation.
-The [Gate A decision](docs/gate-a-decision.md) distinguishes the blocked
-external work staging table from the repository-owned independent official path.
-The latter passed analytical preparation, but model fitting remains prohibited
-until a separately scoped fitting implementation satisfies the model contract.
-See the
-[variable dictionary](docs/variable-dictionary.md) and
-[raw join audit](docs/raw-join-audit.md) for the supporting evidence and
-reopening criteria.
+[Gate A decision](docs/gate-a-decision.md) is the canonical source for the
+current data-path status:
+
+| Path | Status | Authorized use |
+|---|---|---|
+| Deployed work ETL | Blocked | None; it requires an upstream repair and reload. |
+| Independent official path, 2023 Q1--2025 Q4 | Passed | Preparation and guarded empirical analysis. |
+| Official 2026 Q1--Q2 archives | Separate passed gate | Final held-out evaluation only. |
+
+The [source audit](docs/source-audit.md) and [raw join audit](docs/raw-join-audit.md)
+are historical evidence for the blocked ETL. The [official reconciliation]
+(docs/official-enoe-reconciliation.md) documents the independent path's later
+resolution. See the [variable dictionary](docs/variable-dictionary.md) for the
+approved source rules.
 
 The [profile-model contract](docs/profile-model-contract.md) fixes the first
 segmentation's purpose, input roles, temporal split, weighting, and acceptance
-gates. It is a pre-fit guardrail, not authorization to train or publish a
-model.
+gates. It authorizes only the guarded empirical workflow; no model artifact,
+individual score, official category, or published model is authorized.
 
 The [profile-fitting input safeguards](docs/profile-fitting-inputs.md) encode
 the approved dimensions and audit core inputs, repeat-observation candidates,
@@ -33,7 +38,7 @@ diagnostics before any leakage-exclusion decision.
 
 The [longitudinal sensitivity policy](docs/profile-longitudinal-sensitivities.md)
 fixes a primary temporal split and two fixed-solution robustness analyses;
-model fitting remains prohibited.
+the policy itself does not authorize fitting or change the frozen solution.
 
 The [guarded weighted LCA engine](docs/profile-lca-engine.md) fixes the
 synthetic-only optimization and selection procedure; it cannot fit or serialize

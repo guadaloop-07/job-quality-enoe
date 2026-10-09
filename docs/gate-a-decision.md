@@ -1,5 +1,16 @@
 # Gate A decision
 
+> **Current status and canonical navigation.** This document distinguishes the
+> still-blocked deployed work ETL from the repository-owned independent path.
+> Read it before interpreting the historical [source audit](source-audit.md)
+> or [raw join audit](raw-join-audit.md).
+
+| Data path | Current status | Authorized use |
+|---|---|---|
+| Deployed work ETL and its staging table | Blocked | None; upstream remediation and reload remain required. |
+| Repository-owned independent path, 2023 Q1--2025 Q4 | Passed | Analytical preparation and the guarded empirical workflow. |
+| Official 2026 Q1--Q2 archives | Passed with a separate scope | Final held-out temporal evaluation only; never core staging, training, or selection. |
+
 **Decision on 2026-09-10: source data is viable, but the deployed staging table
 is blocked for analytical preparation until the SDEM–COE joins and storage key
 are repaired and the approved window is reloaded.**

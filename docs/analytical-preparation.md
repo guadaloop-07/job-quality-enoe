@@ -47,5 +47,7 @@ only period-level record counts, positive-weight totals, and archive hashes.
 Do not commit its generated output.
 
 This command does not repair or certify the external work staging table. It
-provides the prerequisite preparation evidence for the independent path; model
-fitting remains out of scope until that evidence is reviewed.
+provides prerequisite preparation evidence for the independent path. The
+separate [guarded empirical-fit workflow](first-guarded-empirical-fit.md)
+performs its own current preflight; this preparation command does not itself
+fit or publish a model.

@@ -1,5 +1,11 @@
 # Raw SDEM–COE join audit
 
+> **Scope.** This is historical evidence about the deployed work ETL's unsafe
+> joins. It does not describe the repository-owned independent staging path,
+> which uses the official key and reconciles the core window. See the current
+> [Gate A decision](gate-a-decision.md) and [independent reconciliation]
+> (official-enoe-reconciliation.md).
+
 The official source files are joinable, but the current deployed staging table
 is not safe for modeling. This audit uses aggregate diagnostics only and never
 emits a person, household, or source row.

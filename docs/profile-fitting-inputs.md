@@ -54,8 +54,9 @@ The approved selection design remains a quarter-based temporal holdout. The
 `N_ENT` as visit metadata and reports aggregate adjacent-quarter transitions,
 but does not turn its candidate signature into nominal linkage. The approved
 [longitudinal sensitivity policy](profile-longitudinal-sensitivities.md) fixes
-the primary and two robustness analyses; a later fitting implementation must
-apply that hierarchy without reopening model selection.
+the primary and two robustness analyses. The [guarded empirical-fit runner]
+(first-guarded-empirical-fit.md) applies that hierarchy without reopening model
+selection.
 
 ## Held-out 2026 interface
 
@@ -73,10 +74,11 @@ selection, or authorize model fitting. See the
 [2026 temporal-evaluation audit](enoe-2026-temporal-evaluation.md) for its
 questionnaire-comparability limit.
 
-## Remaining authorization gate
+## Authorization boundary
 
 The [guarded weighted latent-class engine](profile-lca-engine.md) now fixes the
 stability statistic, label alignment, multi-start protocol, and convergence
-tolerance, but it accepts synthetic inputs only. A later issue must review the
-data interface and resulting evidence before changing the model contract to
-allow an ENOE fit.
+tolerance, but it accepts synthetic inputs only. The separate
+[guarded empirical-fit runner](first-guarded-empirical-fit.md) is the only
+authorized ENOE interface; this input-audit command remains aggregate-only and
+does not itself fit, select, publish, or deploy a model.
