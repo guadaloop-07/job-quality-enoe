@@ -14,6 +14,7 @@ from scripts.profile_lca import (
     disclosure_ready,
     fit_multistart,
     fit_weighted_lca,
+    score_fixed_lca,
     select_candidate,
     synthetic_check,
     synthetic_rows,
@@ -147,6 +148,16 @@ class ProfileLCATests(unittest.TestCase):
         self.assertFalse(disclosure_ready((29, 120)))
         with self.assertRaisesRegex(LCAError, "nonempty sequence"):
             disclosure_ready(())
+
+    def test_fixed_fit_scores_held_out_rows_without_refitting(self):
+        fit, _ = fit_multistart(synthetic_rows(), 2, 20260930)
+
+        result = score_fixed_lca(fit, synthetic_rows())
+
+        self.assertTrue(result["disclosure_ready"])
+        self.assertEqual(sum(result["unweighted_map_profile_counts"]), 150)
+        self.assertAlmostEqual(sum(result["posterior_weighted_profile_shares"]), 1.0)
+        self.assertLess(result["weighted_mean_log_likelihood"], 0)
 
 
 if __name__ == "__main__":

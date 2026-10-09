@@ -45,6 +45,8 @@ requires preflight evidence; no candidate becomes a published model without a
 separate documented interpretability decision.
 The [interpretability review protocol](docs/empirical-lca-interpretability-review.md)
 pre-specifies that decision before the dossier is run.
+The [final held-out 2026 evaluation](docs/final-held-out-2026-evaluation.md)
+scores only the reviewed `K=3` solution against separate official archives.
 
 ## Development setup
 

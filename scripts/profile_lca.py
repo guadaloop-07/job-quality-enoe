@@ -162,6 +162,32 @@ def aligned_stability(reference: LCAFit, comparison: LCAFit) -> float:
     return 1 - best
 
 
+def score_fixed_lca(fit: LCAFit, rows: Sequence[Mapping[str, object]]) -> dict[str, object]:
+    """Score held-out encoded rows against a converged fit without refitting it."""
+    if not fit.converged:
+        raise LCAError("held-out evaluation requires a converged reference fit")
+    encoded, weights, categories = _inputs(rows, fit.categories)
+    if categories != fit.categories:
+        raise LCAError("held-out categories differ from the frozen reference fit")
+
+    log_probability = np.broadcast_to(np.log(fit.class_probabilities), (len(encoded), fit.k)).copy()
+    for feature, probabilities in enumerate(fit.conditional_probabilities):
+        log_probability += np.log(np.maximum(probabilities[:, encoded[:, feature]].T, 1e-12))
+    normalizer = _logsumexp(log_probability)
+    responsibilities = np.exp(log_probability - normalizer)
+    weighted_shares = (responsibilities * weights[:, None]).sum(axis=0) / weights.sum()
+    hard_assignments = responsibilities.argmax(axis=1)
+    unweighted_counts = tuple(int((hard_assignments == index).sum()) for index in range(fit.k))
+    if not disclosure_ready(unweighted_counts):
+        raise LCAError("held-out profile counts fail the disclosure guard")
+    return {
+        "weighted_mean_log_likelihood": float((weights * normalizer[:, 0]).sum() / weights.sum()),
+        "posterior_weighted_profile_shares": [float(value) for value in weighted_shares],
+        "unweighted_map_profile_counts": list(unweighted_counts),
+        "disclosure_ready": True,
+    }
+
+
 def select_candidate(diagnostics: Sequence[Mapping[str, object]]) -> Mapping[str, object]:
     """Apply the contract's predeclared candidate gates, in their fixed order.
 
