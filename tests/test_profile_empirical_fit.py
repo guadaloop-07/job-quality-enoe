@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
+import contextlib
+import io
+import json
+import sys
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 import numpy as np
@@ -17,6 +23,10 @@ from scripts.profile_empirical_fit import (
     candidate_dossier,
     final_held_out_evaluation,
     fixed_solution_robustness,
+    write_candidate_dossier,
+)
+from scripts.profile_empirical_fit import (
+    main as empirical_fit_main,
 )
 from scripts.profile_fitting_inputs import (
     DEVELOPMENT_PERIODS,
@@ -65,6 +75,30 @@ def _fit(rows, k, seed, *, categories=None):
 
 
 class EmpiricalFitTests(unittest.TestCase):
+    def test_candidate_dossier_output_is_aggregate_and_exclusive(self):
+        result = {
+            "candidate_dossier": {
+                "selection_analysis": "primary_only",
+                "conditional_response_probabilities": {"2": {"income_band": [0.5, 0.5]}},
+            }
+        }
+        with TemporaryDirectory() as directory:
+            output = Path(directory) / "evidence" / "candidate-dossier.json"
+            write_candidate_dossier(result, output)
+
+            self.assertEqual(json.loads(output.read_text()), result)
+            self.assertNotIn("entity", output.read_text())
+            with self.assertRaises(FileExistsError):
+                write_candidate_dossier(result, output)
+
+    def test_candidate_dossier_requires_an_output_path(self):
+        with patch.object(sys, "argv", ["profile_empirical_fit.py", "candidate-dossier"]):
+            with contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(SystemExit) as error:
+                    empirical_fit_main()
+
+        self.assertEqual(error.exception.code, 2)
+
     def test_primary_sql_returns_only_approved_fit_columns(self):
         query = _input_sql("primary", "selection")
         result_projection = query.split("FROM input_rows", maxsplit=1)[0]

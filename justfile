@@ -110,8 +110,8 @@ profile-longitudinal-sensitivity-audit:
 profile-lca-synthetic-check:
     uv run --locked python scripts/profile_lca.py synthetic-check
 
-profile-lca-candidate-dossier:
-    uv run --locked python scripts/profile_empirical_fit.py candidate-dossier
+profile-lca-candidate-dossier output:
+    uv run --locked python scripts/profile_empirical_fit.py candidate-dossier --output {{output}}
 
 profile-lca-fixed-robustness review:
     uv run --locked python scripts/profile_empirical_fit.py fixed-solution-robustness --interpretability-review {{review}}
