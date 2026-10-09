@@ -1,5 +1,9 @@
 # Independent ENOE staging reconciliation
 
+> This evidence supports the repository-owned independent path only. For its
+> relationship to the still-blocked deployed work ETL and to 2026 evaluation,
+> see the [Gate A decision](gate-a-decision.md).
+
 Captured on 2026-09-11 from the official archives listed in the
 [source manifest](official-enoe-source-manifest.md), using the independent
 PostgreSQL environment. The audit compares only aggregate candidate counts and

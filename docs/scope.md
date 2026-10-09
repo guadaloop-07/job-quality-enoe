@@ -4,6 +4,11 @@ Approved on 2026-09-08. Core window: 2023 Q1–2025 Q4. Audit window:
 2023 Q1–2026 Q2. Additional quarters are candidates for temporal evaluation,
 conditional on comparable definitions and usable coverage.
 
+> **Historical scope record.** This document records the initial pilot
+> authorization. Subsequent decisions distinguish the blocked deployed work
+> ETL from the validated repository-owned independent path; see the current
+> [Gate A decision](gate-a-decision.md).
+
 The question is whether interpretable, stable profiles of employment conditions
 can be identified among subordinate paid workers aged 15 or older in Jalisco.
 Profiles are analytical constructs, not official INEGI categories or a universal
@@ -34,8 +39,10 @@ implementing splits. Do not compare partial-year and full-year totals.
 State-level reporting is the default. Municipal identifiers do not establish
 municipal representativeness. Additional domains require defensible inference
 and precision. No municipal rankings, individual transitions, national extension,
-model fitting or public deployment are included in this initial change.
+model fitting or public deployment were included in this initial change.
 
-Gate A remains open until coverage, code semantics, join integrity and usable
-contract/protection dimensions are established. Resolve `tue_ppal` versus
-`emp_ppal` before using informal employment as a benchmark.
+The initial Gate A remained open until coverage, code semantics, join integrity
+and usable contract/protection dimensions were established. The later
+independent path passed its corresponding gate for 2023 Q1--2025 Q4, while the
+deployed work ETL remains blocked. Resolve `tue_ppal` versus `emp_ppal` before
+using informal employment as a benchmark.

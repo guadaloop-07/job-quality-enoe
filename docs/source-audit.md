@@ -1,5 +1,11 @@
 # Reproducible source audit
 
+> **Scope.** This runner audits the deployed work ETL's staging table. Its
+> findings must not be generalized to the repository-owned independent path.
+> For the current data-path status, read the [Gate A decision]
+> (gate-a-decision.md); for evidence that the independent core window
+> reconciles, see [independent reconciliation](official-enoe-reconciliation.md).
+
 Run from the repository root with Python 3.12 and uv. The runner uses the `psql`
 client, either locally with libpq environment variables or inside Docker:
 
@@ -48,7 +54,7 @@ The natural-key check covers the post-ingestion table. It cannot prove original
 SDEM–COE correspondence or detect records lost before insertion. The bounded
 [raw join audit](raw-join-audit.md) now shows that the official shared key is
 safe in the inspected archives while the current ETL key is not; this is why
-Gate A remains blocked.
+the deployed work-ETL Gate A remains blocked.
 
 See [findings](audit-findings.md), the [Gate A decision](gate-a-decision.md),
 and [implementation progress](implementation-progress.md).
