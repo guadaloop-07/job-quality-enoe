@@ -53,8 +53,9 @@ probabilistic patterns.
 
 ## Local review record
 
-Store the review record in a secure, non-versioned location alongside the
-aggregate dossier. Do not commit it to Git. The record supplied to
+Store the review record alongside the aggregate dossier written by
+`just profile-lca-candidate-dossier <output-path>` in a secure, non-versioned
+location. Do not commit either file to Git. The record supplied to
 `profile-lca-fixed-robustness` must contain the required fields:
 
 ```json

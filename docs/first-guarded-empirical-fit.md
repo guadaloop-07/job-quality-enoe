@@ -14,7 +14,7 @@ just enoe-prepare
 just profile-fitting-input-audit
 just profile-longitudinal-sensitivity-audit
 just enoe-evaluation-audit
-just profile-lca-candidate-dossier
+just profile-lca-candidate-dossier outputs/candidate-dossier-YYYY-MM-DD.json
 ```
 
 The runner reads `analysis.enoe_person_quarter_prepared` in read-only mode. SQL
@@ -51,6 +51,12 @@ That decision must follow the [empirical LCA interpretability review
 protocol](empirical-lca-interpretability-review.md), including a plain-language
 label supported by at least two substantive dimensions. Missing, unspecified,
 and response-quality states alone cannot define a profile.
+
+The output path is required. It is created exclusively, so it cannot replace
+earlier evidence, and `outputs/` is excluded from Git. Store the aggregate
+dossier and its subsequent interpretability review record together in a secure
+local location. The payload contains no source rows, identifiers, individual
+scores, or model parameters.
 
 After that review, the chosen K is fixed. Complete-response, sensitivity A, and
 sensitivity B analyses may assess that fixed solution only; they cannot choose

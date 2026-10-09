@@ -614,6 +614,14 @@ def run_candidate_dossier(base_seed: int, data_dir: Path) -> dict[str, object]:
     }
 
 
+def write_candidate_dossier(result: Mapping[str, object], output: Path) -> None:
+    """Persist aggregate dossier evidence once without replacing an earlier run."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with output.open("x") as target:
+        json.dump(result, target, indent=2, sort_keys=True)
+        target.write("\n")
+
+
 def run_fixed_solution_robustness(
     review_path: Path, base_seed: int, data_dir: Path
 ) -> dict[str, object]:
@@ -682,10 +690,15 @@ def main() -> None:
     )
     parser.add_argument("--seed", type=int, default=20260930)
     parser.add_argument("--data-dir", type=Path, default=Path("data/raw/enoe"))
+    parser.add_argument("--output", type=Path)
     parser.add_argument("--interpretability-review", type=Path)
     args = parser.parse_args()
     if args.command == "candidate-dossier":
+        if args.output is None:
+            parser.error("candidate-dossier requires --output")
         result = run_candidate_dossier(args.seed, args.data_dir)
+        write_candidate_dossier(result, args.output)
+        return
     elif args.command == "fixed-solution-robustness":
         if args.interpretability_review is None:
             parser.error("fixed-solution-robustness requires --interpretability-review")
