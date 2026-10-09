@@ -116,6 +116,9 @@ profile-lca-candidate-dossier:
 profile-lca-fixed-robustness review:
     uv run --locked python scripts/profile_empirical_fit.py fixed-solution-robustness --interpretability-review {{review}}
 
+profile-lca-final-held-out-evaluation review:
+    uv run --locked python scripts/profile_empirical_fit.py final-held-out-evaluation --interpretability-review {{review}}
+
 catalog-validate:
     uv run --locked python scripts/validate_compose_env.py >&2
     uv run --locked python scripts/catalog_validate.py

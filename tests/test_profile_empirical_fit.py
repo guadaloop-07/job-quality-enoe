@@ -10,13 +10,19 @@ import numpy as np
 from scripts.profile_empirical_fit import (
     EmpiricalFitError,
     _archive_hashes,
+    _evaluation_feature_row,
     _input_sql,
     _normalized_rows,
     _renormalize_rows,
     candidate_dossier,
+    final_held_out_evaluation,
     fixed_solution_robustness,
 )
-from scripts.profile_fitting_inputs import DEVELOPMENT_PERIODS, SELECTION_PERIODS
+from scripts.profile_fitting_inputs import (
+    DEVELOPMENT_PERIODS,
+    EVALUATION_PERIODS,
+    SELECTION_PERIODS,
+)
 from scripts.profile_lca import LCAFit
 
 
@@ -40,7 +46,10 @@ def _raw_row(period: str, weight: int = 1) -> dict[str, object]:
 
 def _fit(rows, k, seed, *, categories=None):
     categories = categories or tuple(("a", "b") for _ in range(5))
-    probabilities = tuple(np.tile((0.8, 0.2), (k, 1)) for _ in range(5))
+    probabilities = tuple(
+        np.full((k, len(feature_categories)), 1 / len(feature_categories))
+        for feature_categories in categories
+    )
     return (
         LCAFit(
             k,
@@ -103,6 +112,85 @@ class EmpiricalFitTests(unittest.TestCase):
 
         self.assertEqual([row["weight"] for row in normalized], [0.4, 0.6])
         self.assertEqual(sum(row["weight"] for row in normalized), 1.0)
+
+    def test_evaluation_row_reuses_prepared_view_feature_rules(self):
+        row = _evaluation_feature_row(
+            {
+                "survey_year": "2026",
+                "survey_quarter": "1",
+                "fac_tri": 250,
+                "ing7c": "2",
+                "hrsocup": "40",
+                "dur9c": "6",
+                "seg_soc": "2",
+                "pre_asa": "1",
+                "tip_con": "5",
+            }
+        )
+
+        self.assertEqual(row["income_band_state"], "observed_band")
+        self.assertEqual(row["income_band"], 2)
+        self.assertFalse(row["has_health_access"])
+        self.assertTrue(row["has_other_benefits"])
+        self.assertFalse(row["has_written_contract"])
+        self.assertEqual(row["contract_type_state"], "not_applicable")
+
+    def test_evaluation_row_rejects_an_invalid_zero_hour_reason(self):
+        with self.assertRaisesRegex(EmpiricalFitError, "zero hours"):
+            _evaluation_feature_row(
+                {
+                    "survey_year": "2026",
+                    "survey_quarter": "1",
+                    "fac_tri": 250,
+                    "ing7c": "2",
+                    "hrsocup": "0",
+                    "dur9c": "6",
+                    "seg_soc": "2",
+                    "pre_asa": "1",
+                    "tip_con": "5",
+                }
+            )
+
+    def test_final_evaluation_scores_only_the_frozen_k3_solution(self):
+        core = _normalized_rows(
+            [
+                _raw_row(period)
+                for period in DEVELOPMENT_PERIODS + SELECTION_PERIODS
+                for _ in range(2)
+            ]
+        )
+        evaluation = _normalized_rows(
+            [_raw_row(period) for period in EVALUATION_PERIODS for _ in range(2)],
+            EVALUATION_PERIODS,
+        )
+        review = {
+            "selected_k": 3,
+            "profile_labels": [
+                {"profile_index": 1, "label": "Pattern one"},
+                {"profile_index": 2, "label": "Pattern two"},
+                {"profile_index": 3, "label": "Pattern three"},
+            ],
+        }
+        score = {
+            "weighted_mean_log_likelihood": -1.0,
+            "posterior_weighted_profile_shares": [0.4, 0.3, 0.3],
+            "unweighted_map_profile_counts": [40, 30, 30],
+            "disclosure_ready": True,
+        }
+        with (
+            patch("scripts.profile_empirical_fit.fit_multistart", side_effect=_fit),
+            patch("scripts.profile_empirical_fit.score_fixed_lca", return_value=score) as scorer,
+        ):
+            result = final_held_out_evaluation(core, evaluation, review, 123)
+
+        self.assertEqual(result["selected_k"], 3)
+        self.assertEqual(result["evaluation_role"], "held_out_2026_only")
+        self.assertEqual(set(result["evaluation_periods"]), set(EVALUATION_PERIODS))
+        self.assertEqual(scorer.call_count, 2)
+
+    def test_final_evaluation_rejects_a_reviewed_solution_other_than_k3(self):
+        with self.assertRaisesRegex(EmpiricalFitError, "only for the reviewed K=3"):
+            final_held_out_evaluation({}, {}, {"selected_k": 2}, 123)
 
     def test_candidate_dossier_is_primary_only_and_does_not_emit_raw_input_rows(self):
         normalized = {

@@ -14,30 +14,45 @@ from decimal import Decimal
 from pathlib import Path
 
 if __package__:
-    from scripts.enoe_ingest import database_sql
+    from scripts.enoe_ingest import database_sql, validate_archive
+    from scripts.enoe_temporal_audit import EVALUATION_PERIODS as ARCHIVE_EVALUATION_PERIODS
+    from scripts.enoe_temporal_audit import REFERENCE_PERIOD
     from scripts.profile_fitting_inputs import (
         DEVELOPMENT_PERIODS,
+        EVALUATION_PERIODS,
         SELECTION_PERIODS,
         core_input_audit,
         encode_feature_row,
+        evaluation_input_audit,
     )
     from scripts.profile_lca import (
         LCAError,
         aligned_stability,
         category_definitions,
         fit_multistart,
+        score_fixed_lca,
     )
     from scripts.profile_longitudinal_sensitivities import audit_official_archives
     from scripts.profile_model_contract import load_contract, validate_contract
 else:
-    from enoe_ingest import database_sql
+    from enoe_ingest import database_sql, validate_archive
+    from enoe_temporal_audit import EVALUATION_PERIODS as ARCHIVE_EVALUATION_PERIODS
+    from enoe_temporal_audit import REFERENCE_PERIOD
     from profile_fitting_inputs import (
         DEVELOPMENT_PERIODS,
+        EVALUATION_PERIODS,
         SELECTION_PERIODS,
         core_input_audit,
         encode_feature_row,
+        evaluation_input_audit,
     )
-    from profile_lca import LCAError, aligned_stability, category_definitions, fit_multistart
+    from profile_lca import (
+        LCAError,
+        aligned_stability,
+        category_definitions,
+        fit_multistart,
+        score_fixed_lca,
+    )
     from profile_longitudinal_sensitivities import audit_official_archives
     from profile_model_contract import load_contract, validate_contract
 
@@ -159,15 +174,105 @@ def _renormalize_rows(rows: Sequence[Mapping[str, object]], period: str) -> list
     ]
 
 
-def _normalized_rows(rows: Sequence[Mapping[str, object]]) -> dict[str, list[dict[str, object]]]:
+def _normalized_rows(
+    rows: Sequence[Mapping[str, object]],
+    expected_periods: Sequence[str] = DEVELOPMENT_PERIODS + SELECTION_PERIODS,
+) -> dict[str, list[dict[str, object]]]:
     encoded = [encode_feature_row(row) for row in rows]
     grouped: dict[str, list[Mapping[str, object]]] = defaultdict(list)
     for row in encoded:
         grouped[str(row["period"])].append(row)
-    expected = DEVELOPMENT_PERIODS + SELECTION_PERIODS
+    expected = tuple(expected_periods)
     if tuple(sorted(grouped)) != expected:
         raise EmpiricalFitError("empirical fit input has incomplete or unexpected periods")
     return {period: _renormalize_rows(grouped[period], period) for period in expected}
+
+
+def _evaluation_feature_row(record: Mapping[str, object]) -> dict[str, object]:
+    """Apply the approved prepared-view transformations to one in-memory 2026 row."""
+    income = record.get("ing7c")
+    if income in {"1", "2", "3", "4", "5"}:
+        income_band, income_state = int(str(income)), "observed_band"
+    elif income == "6":
+        income_band, income_state = 6, "no_income"
+    elif income == "7":
+        income_band, income_state = None, "unspecified"
+    elif income is None:
+        income_band, income_state = None, "missing"
+    else:
+        raise EmpiricalFitError("held-out income band is outside the governed support")
+
+    duration = record.get("dur9c")
+    health = record.get("seg_soc")
+    benefits = record.get("pre_asa")
+    contract = record.get("tip_con")
+    hours = record.get("hrsocup")
+    if duration not in {"1", "2", "3", "4", "5", "6", "7", "8", "9", None}:
+        raise EmpiricalFitError("held-out duration is outside the governed support")
+    if health not in {"1", "2", "3", None}:
+        raise EmpiricalFitError("held-out health-access code is outside the governed support")
+    if benefits not in {"1", "2", "3", None}:
+        raise EmpiricalFitError("held-out non-health-benefits code is outside the governed support")
+    if contract not in {"1", "2", "3", "4", "5", "6", None}:
+        raise EmpiricalFitError("held-out contract code is outside the governed support")
+    if hours is not None and (not str(hours).isdigit() or not 0 <= int(str(hours)) <= 168):
+        raise EmpiricalFitError("held-out weekly hours are outside the governed support")
+    if hours == "0" and duration not in {"1", "9"}:
+        raise EmpiricalFitError("held-out zero hours require an approved duration reason")
+    return {
+        "survey_year": int(str(record["survey_year"])),
+        "survey_quarter": int(str(record["survey_quarter"])),
+        "analysis_weight": record["fac_tri"],
+        "income_band": income_band,
+        "income_band_state": income_state,
+        "dur9c": duration,
+        "has_health_access": True if health == "1" else False if health == "2" else None,
+        "health_access_state": (
+            "observed" if health in {"1", "2"} else "unspecified" if health == "3" else "missing"
+        ),
+        "has_other_benefits": True if benefits == "1" else False if benefits == "2" else None,
+        "other_benefits_state": (
+            "observed"
+            if benefits in {"1", "2"}
+            else "unspecified"
+            if benefits == "3"
+            else "missing"
+        ),
+        "has_written_contract": (
+            True if contract in {"1", "2", "3", "4"} else False if contract == "5" else None
+        ),
+        "contract_type": "temporary"
+        if contract == "2"
+        else "indefinite"
+        if contract == "3"
+        else None,
+        "contract_type_state": (
+            "observed_type"
+            if contract in {"2", "3"}
+            else "type_unspecified"
+            if contract in {"1", "4"}
+            else "not_applicable"
+            if contract == "5"
+            else "unspecified"
+            if contract == "6"
+            else "missing"
+        ),
+    }
+
+
+def read_evaluation_inputs(
+    data_dir: Path,
+) -> tuple[dict[str, list[dict[str, object]]], dict[str, object]]:
+    """Validate and encode only held-out official archives, entirely in memory."""
+    evaluation_paths = {
+        period: data_dir / period.archive_name for period in ARCHIVE_EVALUATION_PERIODS
+    }
+    evidence = evaluation_input_audit(data_dir / REFERENCE_PERIOD.archive_name, evaluation_paths)
+    records: list[dict[str, object]] = []
+    for period in ARCHIVE_EVALUATION_PERIODS:
+        validated = validate_archive(period, evaluation_paths[period])
+        records.extend(_evaluation_feature_row(record) for record in validated.records)
+    return _normalized_rows(records, EVALUATION_PERIODS), evidence
 
 
 def read_fit_inputs(mode: str) -> dict[str, list[dict[str, object]]]:
@@ -419,6 +524,73 @@ def fixed_solution_robustness(
     }
 
 
+def _evaluation_labels(review: Mapping[str, object], k: int) -> list[dict[str, object]]:
+    labels = review.get("profile_labels")
+    if not isinstance(labels, list) or len(labels) != k:
+        raise EmpiricalFitError(
+            "held-out evaluation requires one documented label per frozen profile"
+        )
+    normalized = []
+    for index, item in enumerate(labels, start=1):
+        if (
+            not isinstance(item, Mapping)
+            or item.get("profile_index") != index
+            or not isinstance(item.get("label"), str)
+            or not item["label"].strip()
+        ):
+            raise EmpiricalFitError("held-out evaluation profile labels are incomplete")
+        normalized.append({"profile_index": index, "label": item["label"]})
+    return normalized
+
+
+def final_held_out_evaluation(
+    core: Mapping[str, Sequence[Mapping[str, object]]],
+    evaluation: Mapping[str, Sequence[Mapping[str, object]]],
+    review: Mapping[str, object],
+    base_seed: int,
+) -> dict[str, object]:
+    """Score 2026 against the frozen development reference without refitting on held-out rows."""
+    if int(review["selected_k"]) != 3:
+        raise EmpiricalFitError(
+            "final held-out evaluation is authorized only for the reviewed K=3 solution"
+        )
+    if tuple(sorted(core)) != DEVELOPMENT_PERIODS + SELECTION_PERIODS:
+        raise EmpiricalFitError("held-out evaluation requires the complete core temporal window")
+    if tuple(sorted(evaluation)) != EVALUATION_PERIODS:
+        raise EmpiricalFitError("held-out evaluation requires exactly 2026Q1 and 2026Q2")
+    k = 3
+    categories = category_definitions(
+        [row for period in DEVELOPMENT_PERIODS + SELECTION_PERIODS for row in core[period]]
+    )
+    try:
+        reference, converged_starts = fit_multistart(
+            [row for period in DEVELOPMENT_PERIODS for row in core[period]],
+            k,
+            base_seed + k * 100,
+            categories=categories,
+        )
+        period_results = {
+            period: score_fixed_lca(reference, evaluation[period]) for period in EVALUATION_PERIODS
+        }
+    except LCAError as error:
+        raise EmpiricalFitError(
+            "final held-out evaluation could not score the frozen solution"
+        ) from error
+    return {
+        "fit_authorized": True,
+        "selection_analysis": "primary_only_already_reviewed",
+        "selected_k": k,
+        "evaluation_role": "held_out_2026_only",
+        "profile_labels": _evaluation_labels(review, k),
+        "reference": {
+            "development_periods": list(DEVELOPMENT_PERIODS),
+            "converged_starts": converged_starts,
+            "development_profile_evidence": _interpretability_evidence(reference),
+        },
+        "evaluation_periods": period_results,
+    }
+
+
 def run_candidate_dossier(base_seed: int, data_dir: Path) -> dict[str, object]:
     """Execute the primary-only dossier and include reproducibility metadata."""
     _authorized_contract()
@@ -470,19 +642,60 @@ def run_fixed_solution_robustness(
     }
 
 
+def run_final_held_out_evaluation(
+    review_path: Path, base_seed: int, data_dir: Path
+) -> dict[str, object]:
+    """Run the one guarded 2026 evaluation after the K=3 specification is frozen."""
+    _authorized_contract()
+    review = _review(review_path)
+    preflight = _preflight(data_dir)
+    evaluation, evaluation_input = read_evaluation_inputs(data_dir)
+    contract_path = Path(__file__).resolve().parents[1] / "config" / "profile_model_contract.json"
+    return {
+        "run_metadata": {
+            "contract_sha256": hashlib.sha256(contract_path.read_bytes()).hexdigest(),
+            "source_archive_sha256": {
+                **_archive_hashes(),
+                **{
+                    item["period"]: item["provenance"]["sha256"]
+                    for item in evaluation_input["evaluation_periods"]
+                },
+            },
+            "code_commit": subprocess.run(
+                ["git", "rev-parse", "HEAD"], check=True, text=True, capture_output=True
+            ).stdout.strip(),
+            "random_seed": base_seed,
+            "period_role": "final_held_out_evaluation",
+        },
+        "preflight": {**preflight, "held_out_input": evaluation_input},
+        "final_held_out_evaluation": final_held_out_evaluation(
+            read_fit_inputs("primary"), evaluation, review, base_seed
+        ),
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("candidate-dossier", "fixed-solution-robustness"))
+    parser.add_argument(
+        "command",
+        choices=("candidate-dossier", "fixed-solution-robustness", "final-held-out-evaluation"),
+    )
     parser.add_argument("--seed", type=int, default=20260930)
     parser.add_argument("--data-dir", type=Path, default=Path("data/raw/enoe"))
     parser.add_argument("--interpretability-review", type=Path)
     args = parser.parse_args()
     if args.command == "candidate-dossier":
         result = run_candidate_dossier(args.seed, args.data_dir)
-    else:
+    elif args.command == "fixed-solution-robustness":
         if args.interpretability_review is None:
             parser.error("fixed-solution-robustness requires --interpretability-review")
         result = run_fixed_solution_robustness(
+            args.interpretability_review, args.seed, args.data_dir
+        )
+    else:
+        if args.interpretability_review is None:
+            parser.error("final-held-out-evaluation requires --interpretability-review")
+        result = run_final_held_out_evaluation(
             args.interpretability_review, args.seed, args.data_dir
         )
     print(json.dumps(result, indent=2, sort_keys=True))

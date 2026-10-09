@@ -58,7 +58,11 @@ OUT_OF_SCOPE = {
     "public_deployment",
 }
 EMPIRICAL_FIT_AUTHORIZATION = {
-    "allowed_commands": ["profile-lca-candidate-dossier", "profile-lca-fixed-robustness"],
+    "allowed_commands": [
+        "profile-lca-candidate-dossier",
+        "profile-lca-fixed-robustness",
+        "profile-lca-final-held-out-evaluation",
+    ],
     "input_transport": "read_only_ephemeral_encoded_person_quarter_rows",
     "selection_analysis": "primary_only",
     "information_criterion": "kish_rescaled_survey_pseudo_bic",

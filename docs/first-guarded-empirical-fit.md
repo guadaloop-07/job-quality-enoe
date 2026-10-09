@@ -62,4 +62,5 @@ and `not_defined_by_response_states_alone: true`:
 just profile-lca-fixed-robustness /secure/path/interpretability-review.json
 ```
 
-The 2026 archives may then be used once for final evaluation only.
+The 2026 archives may then be used once for final evaluation only, using the
+[final held-out 2026 evaluation](final-held-out-2026-evaluation.md) protocol.

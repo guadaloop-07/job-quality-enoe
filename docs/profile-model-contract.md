@@ -112,4 +112,5 @@ minimum of 30 unweighted records and requires INEGI disclosure review.
 The contract prohibits individual prediction or ranking, causal claims,
 municipal profiles, 2026 training, and public deployment. The first dossier's
 pseudo-BIC winner still requires documented human interpretability review;
-only then may fixed-solution robustness and final held-out evaluation proceed.
+only then may fixed-solution robustness and the
+[final held-out 2026 evaluation](final-held-out-2026-evaluation.md) proceed.
