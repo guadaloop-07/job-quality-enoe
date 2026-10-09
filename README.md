@@ -16,11 +16,38 @@ current data-path status:
 | Independent official path, 2023 Q1--2025 Q4 | Passed | Preparation and guarded empirical analysis. |
 | Official 2026 Q1--Q2 archives | Separate passed gate | Final held-out evaluation only. |
 
-The [source audit](docs/source-audit.md) and [raw join audit](docs/raw-join-audit.md)
-are historical evidence for the blocked ETL. The [official reconciliation]
-(docs/official-enoe-reconciliation.md) documents the independent path's later
-resolution. See the [variable dictionary](docs/variable-dictionary.md) for the
-approved source rules.
+## Suggested reading order
+
+For a first reading, use this sequence. It moves from the project purpose and
+data-authority boundary to the controlled analysis workflow; every link below
+names a versioned document in this repository.
+
+1. This README for the project purpose and current data-path status.
+2. The [pilot scope](docs/scope.md) for the analytical boundary and exclusions.
+3. The [Gate A decision](docs/gate-a-decision.md) for the authorization status
+   of each data path.
+4. The [official reconciliation](docs/official-enoe-reconciliation.md) for
+   evidence supporting the independent official path.
+5. [Analytical preparation](docs/analytical-preparation.md) and the
+   [profile-fitting input safeguards](docs/profile-fitting-inputs.md) for the
+   construction and validation of analysis inputs.
+6. The [first guarded empirical fit](docs/first-guarded-empirical-fit.md),
+   [LCA engine](docs/profile-lca-engine.md), and
+   [interpretability review protocol](docs/empirical-lca-interpretability-review.md)
+   for the controlled candidate-selection workflow.
+7. The [final held-out 2026 evaluation](docs/final-held-out-2026-evaluation.md)
+   for the separate evaluation that follows a frozen reviewed solution.
+8. [Implementation progress](docs/implementation-progress.md) for the
+   chronological record of completed and remaining work.
+
+Read the [source audit](docs/source-audit.md),
+[raw join audit](docs/raw-join-audit.md), and
+[audit findings](docs/audit-findings.md) afterwards. They preserve the
+historical evidence for the blocked deployed work ETL, rather than describing
+the current independent path.
+
+See the [variable dictionary](docs/variable-dictionary.md) for the approved
+source rules.
 
 The [profile-model contract](docs/profile-model-contract.md) fixes the first
 segmentation's purpose, input roles, temporal split, weighting, and acceptance
